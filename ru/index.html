@@ -2086,6 +2086,7 @@ function getLang(){
 
 function setLang(lang){
   if (!LANGS[lang]) return;
+
   localStorage.setItem('site_lang', lang);
 
   // update label
@@ -2096,11 +2097,16 @@ function setLang(lang){
   // highlight segmented
   drawerSegBtns.forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
 
-  // placeholder: set html lang attribute
+  // set html lang
   document.documentElement.setAttribute('lang', lang === 'uk' ? 'uk' : lang);
 
-  // TODO later: swap texts by data-i18n
+  // ✅ NEW: navigate to the correct language page
+  // if you are using /uk/, /en/, /ru/ folders:
+  const target = '/' + lang + '/';
+  if (l:contentReference[oaicite:10]{index=10}target && !location.pathname.endsWith(target)) {
+    locati:contentReference[oaicite:11]{index=11}
 }
+
 
 function closeLangMenu(){
   if (!langWrap) return;
