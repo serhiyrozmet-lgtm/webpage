@@ -1273,11 +1273,9 @@ body.drawer-open .nav{
   .slider{
     gap: 14px !important;
 
-    /* horizontal scroll, keep shadows/corners visible */
     overflow-x: auto !important;
     overflow-y: visible !important;
 
-    /* remove extra side padding */
     padding: 10px 0 16px !important;
 
     scroll-snap-type: x mandatory !important;
@@ -1285,7 +1283,10 @@ body.drawer-open .nav{
     scroll-padding-right: 14px !important;
 
     -webkit-overflow-scrolling: touch;
-    touch-action: pan-x;
+
+    /* IMPORTANT: allow horizontal swipe */
+    touch-action: pan-x !important;
+    overscroll-behavior-x: contain;
   }
 
   /* Trades: full width */
