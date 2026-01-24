@@ -13,9 +13,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
-  <style>
 
-    /* Only hide animated elements when JS is running */
+<style>
+/* =========================================================
+   BASE + GLOBAL
+   (keeps your current logic; only reformatted/structured)
+========================================================= */
+
+/* Only hide animated elements when JS is running */
 .js .reveal-title,
 .js .reveal-side{
   opacity: 0;
@@ -48,16 +53,18 @@
 }
 
 *{ box-sizing: border-box; }
+
 html, body{
   width: 100%;
   overflow-x: hidden; /* hard stop */
 }
+html{ scroll-behavior: smooth; }
+
 .wrap{
   max-width: 1120px;
   width: 100%;
   overflow-x: hidden; /* extra safety */
 }
-html{ scroll-behavior: smooth; }
 
 body{
   margin: 0;
@@ -96,29 +103,20 @@ body::after{
   to   { background-position: 260px 260px, -520px 520px; }
 }
 
-
 /* =======================
    ORANGE GLOW UTILITIES
 ======================= */
-
-/* soft ambient glow */
-.glow-soft{
-  position: relative;
-}
+.glow-soft{ position: relative; }
 .glow-soft::after{
   content:"";
   position:absolute;
   inset: -40px;
-  background:
-    radial-gradient(420px 220px at 30% 10%, rgba(255,138,43,0.22), transparent 65%);
+  background: radial-gradient(420px 220px at 30% 10%, rgba(255,138,43,0.22), transparent 65%);
   pointer-events:none;
   z-index: -1;
 }
 
-/* stronger accent glow */
-.glow-strong{
-  position: relative;
-}
+.glow-strong{ position: relative; }
 .glow-strong::after{
   content:"";
   position:absolute;
@@ -130,7 +128,6 @@ body::after{
   z-index: -1;
 }
 
-/* subtle edge highlight */
 .glow-edge{
   box-shadow:
     0 18px 60px rgba(0,0,0,0.55),
@@ -138,10 +135,9 @@ body::after{
     0 0 80px rgba(255,138,43,0.18);
 }
 
-
-/* =======================
+/* =========================================================
    TOP NAV
-======================= */
+========================================================= */
 .nav{
   position: sticky;
   top: 0;
@@ -172,11 +168,10 @@ body::after{
   user-select: none;
 }
 .logo-img{
-  height: 50px;          /* matches nav height perfectly */
+  height: 50px;
   width: auto;
   display: block;
 }
-
 .logo-badge{
   width: 34px;
   height: 34px;
@@ -209,9 +204,9 @@ body::after{
   background: rgba(255,255,255,0.04);
 }
 
-/* =======================
+/* =========================================================
    LANGUAGE (DESKTOP)
-======================= */
+========================================================= */
 .lang-wrap{ position: relative; }
 
 .lang{
@@ -228,13 +223,11 @@ body::after{
   user-select: none;
   border: 0;
 }
-
 .lang .dot{
   width: 8px; height: 8px; border-radius: 999px;
   background: rgba(255,138,43,0.95);
   box-shadow: 0 12px 26px rgba(255,138,43,0.22);
 }
-
 .lang-caret{ width: 18px; height: 18px; opacity: .9; }
 
 .lang-menu{
@@ -270,9 +263,9 @@ body::after{
 .lang-opt:hover{ background: rgba(255,255,255,0.06); }
 .lang-opt.active{ background: rgba(255,138,43,0.14); }
 
-/* =======================
+/* =========================================================
    HAMBURGER + DRAWER
-======================= */
+========================================================= */
 .hamburger{
   display: none;
   width: 46px;
@@ -311,12 +304,16 @@ body::after{
   transform: translateX(110%);
   transition: transform 260ms cubic-bezier(.2,.8,.2,1);
   z-index: 1300;
+
   padding: 18px;
   display: flex;
   flex-direction: column;
   gap: 14px;
+
   overflow-y: auto;                 /* ✅ scroll inside drawer */
   -webkit-overflow-scrolling: touch;
+
+  /* ✅ avoid iPhone white block / safe area */
   padding-bottom: calc(max(18px, env(safe-area-inset-bottom)) + 56px);
 }
 
@@ -353,8 +350,8 @@ body::after{
 }
 .drawer a:hover{ background: rgba(255,255,255,0.08); transform: translateY(-1px); }
 
-body.drawer-open{ 
-  overflow: hidden; 
+body.drawer-open{
+  overflow: hidden;
   touch-action: none;
 }
 body.drawer-open .drawer-overlay{ opacity: 1; pointer-events: auto; }
@@ -385,9 +382,9 @@ body.drawer-open .drawer{ transform: translateX(0%); }
   color: rgba(255,255,255,0.96);
 }
 
-/* =======================
+/* =========================================================
    LAYOUT + SURFACES
-======================= */
+========================================================= */
 .wrap{
   max-width: var(--maxw);
   margin: 0 auto;
@@ -436,9 +433,9 @@ section{
 
 .surface > *{ position: relative; }
 
-/* =======================
+/* =========================================================
    TYPOGRAPHY
-======================= */
+========================================================= */
 h1{
   margin: 0 0 12px;
   font-size: clamp(30px, 4vw, 54px);
@@ -462,9 +459,9 @@ h2{
   max-width: 90ch;
 }
 
-/* =======================
+/* =========================================================
    REVEAL ANIMATIONS
-======================= */
+========================================================= */
 .reveal-title{
   opacity: 0;
   transform: translate3d(0, 28px, 0);
@@ -486,9 +483,9 @@ h2{
   transform: translate3d(0,0,0);
 }
 
-/* =======================
+/* =========================================================
    HERO EXTRAS
-======================= */
+========================================================= */
 .kicker{
   display: inline-flex;
   align-items: center;
@@ -517,18 +514,15 @@ h2{
   color: var(--text);
   font-weight: 900;
   line-height: 1.6;
-}
-.emph{
   position: relative;
   box-shadow:
     0 20px 70px rgba(0,0,0,0.55),
     0 0 120px rgba(255,138,43,0.22);
 }
 
-
-/* =======================
+/* =========================================================
    BULLETS
-======================= */
+========================================================= */
 .bullets{
   margin: 12px 0 0;
   padding: 0;
@@ -556,9 +550,9 @@ h2{
   box-shadow: 0 10px 24px rgba(255,138,43,0.14);
 }
 
-/* =======================
+/* =========================================================
    ACCORDION
-======================= */
+========================================================= */
 .accordion{
   display: grid;
   gap: 10px;
@@ -610,9 +604,9 @@ h2{
 .acc-item.open .acc-panel{ max-height: 420px; }
 .acc-item.open .chev{ transform: rotate(180deg); }
 
-/* =======================
+/* =========================================================
    PRICING
-======================= */
+========================================================= */
 .price-grid{
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -644,9 +638,9 @@ h2{
   color: rgba(255,138,43,0.95);
 }
 
-/* =======================
+/* =========================================================
    WHY US
-======================= */
+========================================================= */
 .why{
   margin-top: 12px;
   display: grid;
@@ -661,9 +655,9 @@ h2{
   font-weight: 800;
 }
 
-/* =======================
+/* =========================================================
    DOTS (SLIDERS)
-======================= */
+========================================================= */
 .dots{
   display:flex;
   justify-content:center;
@@ -681,28 +675,25 @@ h2{
   transform: scale(1.25);
 }
 
-/* =======================
-   SLIDER BASE (MOBILE ONLY)
-   IMPORTANT: No scroll-trap!
-======================= */
+/* =========================================================
+   SLIDER BASE
+   IMPORTANT: No vertical scroll-trap!
+========================================================= */
 .slider{
   display: flex;
   gap: 18px;
 }
-
-/* Hide scrollbars when slider is enabled */
 .slider::-webkit-scrollbar{ display:none; }
 
-/* =======================
+/* =========================================================
    TRADES
-======================= */
+========================================================= */
 #tradesSlider .trade-slide{
   border-radius: 22px;
   background: rgba(255,255,255,0.05);
   overflow: hidden;
   box-shadow: 0 18px 55px rgba(0,0,0,0.35);
 }
-
 #tradesSlider .trade-img{
   width: 100%;
   aspect-ratio: 1000 / 630;
@@ -722,9 +713,9 @@ h2{
   font-size: 16px;
 }
 
-/* =======================
-   REVIEWS ✅ FIXED HEIGHT + PHOTO SAME HEIGHT ON DESKTOP
-======================= */
+/* =========================================================
+   REVIEWS
+========================================================= */
 .review-slide{
   scroll-snap-align: center;
   min-width: min(860px, 92vw);
@@ -733,9 +724,7 @@ h2{
   box-shadow: 0 18px 60px rgba(0,0,0,0.45);
   position: relative;
   overflow: hidden;
-
-  /* fallback */
-  min-height: 320px;
+  min-height: 320px; /* fallback */
 }
 .review-slide::before{
   content:"";
@@ -755,30 +744,20 @@ h2{
   opacity: 0.95;
   pointer-events:none;
 }
-
 .review-inner{
   position: relative;
   padding: 24px;
-
   display: grid;
   grid-template-columns: 220px 1fr;
   gap: 18px;
-
-  /* default */
-  align-items: start;
+  align-items: start; /* default */
 }
-
 .review-photo{
   width: 220px;
-
-  /* default (mobile overrides will change anyway) */
   aspect-ratio: 1 / 1;
-
   border-radius: 22px;
   background: rgba(0,0,0,0.22);
   overflow: hidden;
-
-  /* padding look */
   box-shadow: inset 0 0 0 10px rgba(255,255,255,0.03);
 }
 .review-photo img{
@@ -788,7 +767,6 @@ h2{
   display: block;
   filter: contrast(1.02);
 }
-
 .review-name{
   font-weight: 900;
   font-size: 22px;
@@ -811,9 +789,9 @@ h2{
   white-space: pre-line;
 }
 
-/* =======================
+/* =========================================================
    FIXED BUTTONS
-======================= */
+========================================================= */
 .fab{
   position: fixed;
   bottom: 18px;
@@ -835,9 +813,9 @@ h2{
 .fab-right{ right: 18px; background: rgba(255,138,43,0.92); }
 .fab svg{ width: 30px; height: 30px; }
 
-/* =======================
+/* =========================================================
    FOOTER
-======================= */
+========================================================= */
 footer{
   background: rgba(7,8,10,0.82);
   backdrop-filter: blur(16px);
@@ -887,9 +865,9 @@ footer{
 .footer-center{ justify-content:center; text-align:center; width:100%; }
 .footer-copy{ width:100%; }
 
-/* =======================
-   RESPONSIVE
-======================= */
+/* =========================================================
+   RESPONSIVE (ORIGINAL RULES)
+========================================================= */
 
 /* HERO full screen on laptop */
 @media (min-width: 900px){
@@ -918,23 +896,20 @@ footer{
   #tradesDots{ display:none; }
 }
 
-/* ✅ DESKTOP: fixed card height + photo equals the card height (with padding) */
+/* Desktop: fixed card height + photo equals the card height (with padding) */
 @media (min-width: 900px){
   .review-slide{
-    height: 360px;            /* 👈 adjust: 340–420px */
+    height: 360px;
     min-height: unset;
   }
-
   .review-inner{
     height: 100%;
-    align-items: stretch;     /* 👈 allows photo + text column to fill height */
+    align-items: stretch;
   }
-
   .review-photo{
-    height: 100%;             /* 👈 photo equals card height */
-    aspect-ratio: auto;       /* 👈 stop forcing a square on desktop */
+    height: 100%;
+    aspect-ratio: auto;
   }
-
   .review-photo img{
     height: 100%;
     object-fit: cover;
@@ -959,15 +934,13 @@ footer{
 
     overscroll-behavior-x: contain;
     overscroll-behavior-y: auto;
-    
   }
 
-#tradesSlider .trade-slide{
-  flex: 0 0 auto;
-  width: min(92vw, 420px);     /* ✅ never wider than viewport */
-  scroll-snap-align: center;
-}
-
+  #tradesSlider .trade-slide{
+    flex: 0 0 auto;
+    width: min(92vw, 420px);
+    scroll-snap-align: center;
+  }
 
   #reviewsSlider .review-slide{
     flex: 0 0 auto;
@@ -978,7 +951,6 @@ footer{
     min-height: unset;
   }
 
-  /* On mobile we can allow the photo to behave like before */
   .review-inner{
     grid-template-columns: 92px 1fr;
     align-items: center;
@@ -988,7 +960,7 @@ footer{
     aspect-ratio: 1 / 1;
     border-radius: 18px;
     box-shadow: inset 0 0 0 6px rgba(255,255,255,0.03);
-    height: auto; /* keep square */
+    height: auto;
   }
 }
 
@@ -1032,7 +1004,7 @@ footer{
   }
 }
 
-/* DESKTOP: reviews slider has a centered viewport + fixed card width */
+/* Desktop: reviews slider has a centered viewport + fixed card width */
 @media (min-width: 900px){
   #reviewsSlider{
     display: flex;
@@ -1064,16 +1036,14 @@ footer{
   }
 }
 
-/* =======================
+/* =========================================================
    HERO (PROMO, NOT A CARD)
-======================= */
+========================================================= */
 #hero .surface.hero{
   padding-top: 34px;
   padding-bottom: 26px;
   position: relative;
 }
-
-/* soft orange glow just for hero */
 #hero .surface.hero::before{
   content:"";
   position:absolute;
@@ -1095,7 +1065,6 @@ footer{
   flex-wrap: wrap;
   margin-bottom: 10px;
 }
-
 .hero-badges{
   display:flex;
   gap: 10px;
@@ -1189,14 +1158,13 @@ footer{
   font-weight: 900;
 }
 
-/* CTA buttons (optional, they match your floating buttons) */
+/* CTA buttons */
 .hero-cta{
   margin-top: 14px;
   display:flex;
   gap: 12px;
   flex-wrap: wrap;
 }
-
 .hero-btn{
   display:inline-flex;
   align-items:center;
@@ -1250,7 +1218,7 @@ footer{
   100%{ box-shadow: 0 0 0 0 rgba(255,138,43,0.0); }
 }
 
-/* mobile refinements */
+/* hero mobile refinements */
 @media (max-width: 720px){
   #hero .surface.hero{ padding-top: 24px; }
   .hero-br{ display:block; }
@@ -1258,6 +1226,96 @@ footer{
   .hero-title{ font-size: clamp(30px, 8.6vw, 42px); }
   .hero-steps{ font-size: 14px; }
 }
+
+/* =========================================================
+   PHONE FIXES (NAV + SLIDERS)
+   Drop-in override (kept same behavior)
+========================================================= */
+
+/* 1) NAV: always visible (fixed) on phone, never hides while scrolling */
+@media (max-width: 720px){
+  .nav{
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1600;
+    transform: translateY(0) !important;
+  }
+
+  /* push content below fixed nav */
+  body{
+    padding-top: calc(var(--navh, 74px) + env(safe-area-inset-top)) !important;
+  }
+
+  /* keep anchors accurate */
+  section{
+    scroll-margin-top: calc(var(--navh, 74px) + env(safe-area-inset-top) + 14px) !important;
+  }
+}
+
+/* 2) DRAWER: when menu is open, top bar must NOT be visible */
+body.drawer-open .nav{
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(-120%) !important;
+}
+
+/* 3) SLIDERS: cards take full available width on phone and never crop corners */
+@media (max-width: 720px){
+  /* use wrap padding as gutter */
+  #tradesSlider,
+  #reviewsSlider{
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .slider{
+    gap: 14px !important;
+
+    /* horizontal scroll, keep shadows/corners visible */
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+
+    /* remove extra side padding */
+    padding: 10px 0 16px !important;
+
+    scroll-snap-type: x mandatory !important;
+    scroll-padding-left: 14px !important;
+    scroll-padding-right: 14px !important;
+
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+  }
+
+  /* Trades: full width */
+  #tradesSlider .trade-slide{
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    max-width: none !important;
+    scroll-snap-align: start !important;
+  }
+
+  /* Reviews: full width */
+  #reviewsSlider .review-slide{
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-width: unset !important;
+    max-width: unset !important;
+    scroll-snap-align: start !important;
+  }
+}
+
+/* keep your existing smaller breakpoint tweak */
+@media (max-width: 520px){
+  .slider{
+    scroll-padding-left: 14px !important;
+    scroll-padding-right: 14px !important;
+  }
+}
+</style>
+
+
 
 </style>
 <style>
