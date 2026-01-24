@@ -700,26 +700,36 @@ h2{
 /* =========================================================
    SLIDER — allow vertical page scroll + horizontal swipe
 ========================================================= */
+/* ===== Slider must allow vertical page scroll + horizontal swipe ===== */
 .slider{
   display: flex;
-  gap: 18px;
-
   overflow-x: auto;
-  overflow-y: visible;          /* 🔥 allow vertical scroll */
-
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-
+  overflow-y: visible;                 /* IMPORTANT: don't block vertical */
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
 
-  scrollbar-width: none;
+  /* IMPORTANT: allow normal vertical page scroll even if finger starts here */
+  touch-action: auto;
 
-  touch-action: pan-x pan-y;    /* 🔥 allow BOTH directions */
+  /* your spacing */
+  padding: 0 16px;
+  gap: 14px;
+
+  /* prevent weird widths */
+  width: 100%;
+  max-width: 100%;
 }
+
+/* Snap each card */
+.trade-slide,
+.review-slide{
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+}
+
+/* Hide horizontal scrollbar (nice on phone) */
 .slider::-webkit-scrollbar{ display:none; }
-
-
+.slider{ scrollbar-width: none; }
 /* =========================================================
    TRADES
 ========================================================= */
