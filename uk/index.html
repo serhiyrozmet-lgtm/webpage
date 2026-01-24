@@ -1953,10 +1953,17 @@ I can get my Blue CSCS card. This helped me get better site access.”</p>
 
   <script>
 (() => {
-  // run after DOM exists
   document.addEventListener('DOMContentLoaded', () => {
 
-    // ===== Reveal on scroll =====
+    /* =========================================================
+       HELPERS
+    ========================================================= */
+    const body = document.body;
+    const isPhoneView = () => window.matchMedia('(max-width: 720px)').matches;
+
+    /* =========================================================
+       REVEAL ON SCROLL
+    ========================================================= */
     const revealTitleEls = document.querySelectorAll('.reveal-title');
     const revealSideEls  = document.querySelectorAll('.reveal-side');
 
@@ -1964,446 +1971,213 @@ I can get my Blue CSCS card. This helped me get better site access.”</p>
       revealTitleEls.forEach(el => el.classList.add('is-visible'));
       revealSideEls.forEach(el => el.classList.add('is-visible'));
     } else {
-      const ioTitle = new IntersectionObserver((entries) => {
-        for (const e of entries) {
-          e.target.classList.toggle('is-visible', e.isIntersecting);
-        }
+      const ioTitle = new IntersectionObserver(entries => {
+        entries.forEach(e =>
+          e.target.classList.toggle('is-visible', e.isIntersecting)
+        );
       }, { threshold: 0.20, rootMargin: '0px 0px -12% 0px' });
 
-      const ioSide = new IntersectionObserver((entries) => {
-        for (const e of entries) {
-          e.target.classList.toggle('is-visible', e.isIntersecting);
-        }
+      const ioSide = new IntersectionObserver(entries => {
+        entries.forEach(e =>
+          e.target.classList.toggle('is-visible', e.isIntersecting)
+        );
       }, { threshold: 0.16, rootMargin: '0px 0px -10% 0px' });
 
       revealTitleEls.forEach(el => ioTitle.observe(el));
       revealSideEls.forEach(el => ioSide.observe(el));
     }
 
-    // ===== Drawer menu logic =====
-    const body = document.body;
+    /* =========================================================
+       DRAWER (MOBILE MENU)
+    ========================================================= */
     const hamburger = document.getElementById('hamburger');
-    const overlay = document.getElementById('drawerOverlay');
-    const closeBtn = document.getElementById('drawerClose');
-    const drawer = document.getElementById('drawer');
+    const overlay   = document.getElementById('drawerOverlay');
+    const closeBtn  = document.getElementById('drawerClose');
+    const drawer    = document.getElementById('drawer');
 
-    function isPhoneView(){
-      return window.matchMedia('(max-width: 720px)').matches;
+    function openDrawer(){
+      body.classList.add('drawer-open');
+      hamburger?.setAttribute('aria-expanded','true');
+      drawer?.setAttribute('aria-hidden','false');
+      overlay?.setAttribute('aria-hidden','false');
+      closeBtn?.focus();
+      body.classList.remove('footer-in-view');
     }
 
+    function closeDrawer(){
+      if (drawer?.contains(document.activeElement)) {
+        hamburger?.focus();
+      }
+      body.classList.remove('drawer-open');
+      hamburger?.setAttribute('aria-expanded','false');
+      drawer?.setAttribute('aria-hidden','true');
+      overlay?.setAttribute('aria-hidden','true');
+      requestAnimationFrame(recomputeFooterState);
+    }
+
+    hamburger?.addEventListener('click', openDrawer);
+    closeBtn?.addEventListener('click', closeDrawer);
+    overlay?.addEventListener('click', closeDrawer);
+
+    document.querySelectorAll('[data-nav]').forEach(link => {
+      link.addEventListener('click', () => {
+        if (body.classList.contains('drawer-open')) closeDrawer();
+      });
+    });
+
+    /* =========================================================
+       FOOTER / FAB COLLISION LOGIC
+    ========================================================= */
     const footerEl = document.getElementById('pageFooter');
 
     function recomputeFooterState(){
-      if (!isPhoneView()){
+      if (!isPhoneView() || body.classList.contains('drawer-open') || !footerEl) {
         body.classList.remove('footer-in-view');
         return;
       }
-      if (body.classList.contains('drawer-open')){
-        body.classList.remove('footer-in-view');
-        return;
-      }
-      if (!footerEl) return;
 
-      const footerRect = footerEl.getBoundingClientRect();
-      const vh = window.innerHeight || document.documentElement.clientHeight;
-
+      const rect = footerEl.getBoundingClientRect();
+      const vh = window.innerHeight;
       const fabSize = 62;
       const fabBottom = 18;
       const advancePx = 40;
 
       const overlapLine = vh - (fabBottom + fabSize) + advancePx;
-      const shouldJump = footerRect.top <= overlapLine;
-
-      body.classList.toggle('footer-in-view', shouldJump);
+      body.classList.toggle('footer-in-view', rect.top <= overlapLine);
     }
 
-function openDrawer(){
-  if (!hamburger || !drawer || !overlay) return;
-
-  body.classList.add('drawer-open');
-  hamburger.setAttribute('aria-expanded','true');
-
-  drawer.setAttribute('aria-hidden','false');
-  overlay.setAttribute('aria-hidden','false');
-
-  // ✅ focus first control in dialog
-  closeBtn?.focus();
-
-  body.classList.remove('footer-in-view');
-}
-
-
-function closeDrawer(){
-  if (!hamburger || !drawer || !overlay) return;
-
-  // ✅ move focus OUT of the drawer before hiding it
-  if (drawer.contains(document.activeElement)) {
-    hamburger.focus();
-  }
-
-  body.classList.remove('drawer-open');
-  hamburger.setAttribute('aria-expanded','false');
-
-  drawer.setAttribute('aria-hidden','true');
-  overlay.setAttribute('aria-hidden','true');
-
-  requestAnimationFrame(recomputeFooterState);
-}
-
-
-    hamburger?.addEventListener('click', () => {
-      body.classList.contains('drawer-open') ? closeDrawer() : openDrawer();
-    });
-    overlay?.addEventListener('click', closeDrawer);
-    closeBtn?.addEventListener('click', closeDrawer);
-    window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
-
-    // Smooth scroll + close drawer
-    function smoothScrollToHash(hash) {
-      const target = document.querySelector(hash);
-      if (!target) return;
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    document.querySelectorAll('[data-nav]').forEach(link => {
-      link.addEventListener('click', (e) => {
-        const href = link.getAttribute('href') || '';
-        if (href.startsWith('#')) {
-          e.preventDefault();
-          closeDrawer();
-          setTimeout(() => smoothScrollToHash(href), 80);
-        }
-      });
-    });
-
-    // ===== Accordion (multi-open) =====
-    document.querySelectorAll('#accordion .acc-item').forEach(item => {
-      const btn = item.querySelector('.acc-btn');
-      if (!btn) return;
-      btn.addEventListener('click', () => {
-        const isOpen = item.classList.contains('open');
-        item.classList.toggle('open', !isOpen);
-        btn.setAttribute('aria-expanded', String(!isOpen));
-      });
-    });
-
-    // ===== Slider dots =====
-    function setupDots(sliderId, dotsId) {
-      const slider = document.getElementById(sliderId);
-      const dotsWrap = document.getElementById(dotsId);
-      if (!slider || !dotsWrap) return;
-
-      const slides = Array.from(slider.children);
-
-      function buildDots() {
-        dotsWrap.innerHTML = '';
-        slides.forEach((_, i) => {
-          const d = document.createElement('div');
-          d.className = 'dot' + (i === 0 ? ' active' : '');
-          d.addEventListener('click', () => {
-            slides[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-          });
-          dotsWrap.appendChild(d);
-        });
-      }
-
-      function setActiveDot(index) {
-        const dots = Array.from(dotsWrap.children);
-        dots.forEach((d, i) => d.classList.toggle('active', i === index));
-      }
-
-      function currentSlideIndex() {
-        const sRect = slider.getBoundingClientRect();
-        const sCenter = sRect.left + sRect.width / 2;
-
-        let bestIdx = 0;
-        let bestDist = Infinity;
-
-        slides.forEach((s, i) => {
-          const r = s.getBoundingClientRect();
-          const c = r.left + r.width / 2;
-          const dist = Math.abs(c - sCenter);
-          if (dist < bestDist) { bestDist = dist; bestIdx = i; }
-        });
-
-        return bestIdx;
-      }
-
-      buildDots();
-
-      let raf = null;
-      slider.addEventListener('scroll', () => {
-        if (raf) cancelAnimationFrame(raf);
-        raf = requestAnimationFrame(() => setActiveDot(currentSlideIndex()));
-      });
-
-      window.addEventListener('resize', () => setActiveDot(currentSlideIndex()));
-
-      setActiveDot(0);
-    }
-
-    setupDots('tradesSlider', 'tradesDots');
-    setupDots('reviewsSlider', 'reviewsDots');
-
-    // ===== Footer FAB jump logic =====
-    window.addEventListener('scroll', recomputeFooterState, { passive: true });
+    window.addEventListener('scroll', recomputeFooterState);
     window.addEventListener('resize', recomputeFooterState);
-    recomputeFooterState();
 
-    // ===== Dissolve card backgrounds =====
-    const dissolveEls = document.querySelectorAll('.dissolve-card');
-    if ('IntersectionObserver' in window && dissolveEls.length) {
-      const thresholds = Array.from({ length: 101 }, (_, i) => i / 100);
-      const ioDissolve = new IntersectionObserver((entries) => {
-        for (const e of entries) {
-          let r = Math.max(0, Math.min(1, e.intersectionRatio));
-          r = 1 - Math.pow(1 - r, 2);
-          e.target.style.setProperty('--vis', r.toFixed(3));
-        }
-      }, { threshold: thresholds, rootMargin: '12% 0px 12% 0px' });
-
-      dissolveEls.forEach(el => ioDissolve.observe(el));
-    }
-
-    // ===== Language selector =====
+    /* =========================================================
+       LANGUAGE SWITCHER
+    ========================================================= */
     const langWrap = document.getElementById('langWrap');
     const langBtn  = document.getElementById('langBtn');
     const langLabel = document.getElementById('langLabel');
+    const menuOpts = document.querySelectorAll('.lang-opt');
+    const drawerSegBtns = document.querySelectorAll('.seg-btn');
 
-    const drawerSegBtns = document.querySelectorAll('.seg-btn[data-lang]');
-    const menuOpts = document.querySelectorAll('.lang-opt[data-lang]');
-
-    const LANGS = { uk: 'UA', en: 'EN', ru: 'RU' };
-
-    function getLang(){
-      return localStorage.getItem('site_lang') || 'uk';
-    }
+    const getLang = () => localStorage.getItem('lang') || 'uk';
 
     function setLang(lang){
-      if (!LANGS[lang]) return;
-
-      localStorage.setItem('site_lang', lang);
-
-      if (langLabel) langLabel.textContent = LANGS[lang];
-
+      localStorage.setItem('lang', lang);
+      if (langLabel) langLabel.textContent = lang.toUpperCase();
       menuOpts.forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
       drawerSegBtns.forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
-
-      document.documentElement.setAttribute('lang', lang === 'uk' ? 'uk' : lang);
-
-      // navigate to language folder
-      const target = '/' + lang + '/';
-      if (!location.pathname.endsWith(target)) {
-        location.href = target;
-      }
-    }
-
-    function closeLangMenu(){
-      if (!langWrap) return;
-      langWrap.classList.remove('open');
-      langBtn?.setAttribute('aria-expanded', 'false');
     }
 
     function toggleLangMenu(){
-      if (!langWrap) return;
-      const open = langWrap.classList.toggle('open');
-      langBtn?.setAttribute('aria-expanded', open ? 'true' : 'false');
+      langWrap?.classList.toggle('open');
+      langBtn?.setAttribute(
+        'aria-expanded',
+        langWrap?.classList.contains('open') ? 'true' : 'false'
+      );
     }
 
-    langBtn?.addEventListener('click', (e) => { e.stopPropagation(); toggleLangMenu(); });
-    document.addEventListener('click', closeLangMenu);
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLangMenu(); });
+    function closeLangMenu(){
+      langWrap?.classList.remove('open');
+      langBtn?.setAttribute('aria-expanded','false');
+    }
 
-    menuOpts.forEach(btn => btn.addEventListener('click', () => { setLang(btn.dataset.lang); closeLangMenu(); }));
-    drawerSegBtns.forEach(btn => btn.addEventListener('click', () => setLang(btn.dataset.lang)));
+    langBtn?.addEventListener('click', e => { e.stopPropagation(); toggleLangMenu(); });
+    document.addEventListener('click', closeLangMenu);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLangMenu(); });
+
+    menuOpts.forEach(b =>
+      b.addEventListener('click', () => { setLang(b.dataset.lang); closeLangMenu(); })
+    );
+    drawerSegBtns.forEach(b =>
+      b.addEventListener('click', () => setLang(b.dataset.lang))
+    );
 
     setLang(getLang());
 
-    // ===== Smart swipe for sliders =====
+    /* =========================================================
+       SLIDER TOUCH SWIPE (PHONE SAFE)
+    ========================================================= */
     function smartSliderSwipe(el){
-  if(!el) return;
+      if(!el) return;
+      let sx=0, sy=0, decided=false, horizontal=false;
 
-  let sx = 0, sy = 0;
-  let decided = false;
-  let isHorizontal = false;
+      el.addEventListener('touchstart', e => {
+        if (e.touches.length !== 1) return;
+        sx = e.touches[0].clientX;
+        sy = e.touches[0].clientY;
+        decided = false;
+      }, { passive:true });
 
-  el.addEventListener("touchstart", (e) => {
-    if (!e.touches || e.touches.length !== 1) return;
-    sx = e.touches[0].clientX;
-    sy = e.touches[0].clientY;
-    decided = false;
-    isHorizontal = false;
-  }, { passive: true });
+      el.addEventListener('touchmove', e => {
+        if (e.touches.length !== 1) return;
+        if (el.scrollWidth <= el.clientWidth + 1) return;
 
-  el.addEventListener("touchmove", (e) => {
-    if (!e.touches || e.touches.length !== 1) return;
+        const dx = e.touches[0].clientX - sx;
+        const dy = e.touches[0].clientY - sy;
 
-    // if slider can't scroll horizontally, never interfere
-    if (el.scrollWidth <= el.clientWidth + 1) return;
+        if (!decided) {
+          if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+          decided = true;
+          horizontal = Math.abs(dx) > Math.abs(dy);
+        }
 
-    const dx = e.touches[0].clientX - sx;
-    const dy = e.touches[0].clientY - sy;
-
-    // decide direction only after small movement
-    if (!decided) {
-      if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
-      decided = true;
-      isHorizontal = Math.abs(dx) > Math.abs(dy);
+        if (horizontal) e.preventDefault();
+      }, { passive:false });
     }
 
-    // IMPORTANT:
-    // Only prevent default if horizontal AND only on iOS-like browsers that need it.
-    // Otherwise let the browser handle native scrolling.
-    if (isHorizontal) {
-      // don't block if it would also block natural horizontal scroll
-      // (we just stop the page from stealing the gesture)
-      e.preventDefault();
-    }
-  }, { passive: false });
-}
+    smartSliderSwipe(document.getElementById('tradesSlider'));
+    smartSliderSwipe(document.getElementById('reviewsSlider'));
 
-smartSliderSwipe(document.getElementById("tradesSlider"));
-smartSliderSwipe(document.getElementById("reviewsSlider"));
-
-    // ===== Drag scroll (desktop) =====
+    /* =========================================================
+       DESKTOP DRAG SCROLL
+    ========================================================= */
     function enableDragScroll(el){
       if (!el) return;
+      let down=false, startX=0, startScroll=0;
 
-      let isDown = false;
-      let startX = 0;
-      let startScrollLeft = 0;
-
-      el.addEventListener('mousedown', (e) => {
+      el.addEventListener('mousedown', e => {
         if (e.button !== 0) return;
-        isDown = true;
+        down = true;
         el.classList.add('dragging');
         startX = e.pageX;
-        startScrollLeft = el.scrollLeft;
+        startScroll = el.scrollLeft;
       });
 
-      window.addEventListener('mouseup', () => {
-        if (!isDown) return;
-        isDown = false;
-        el.classList.remove('dragging');
-      });
+      ['mouseup','mouseleave'].forEach(evt =>
+        el.addEventListener(evt, () => {
+          down=false;
+          el.classList.remove('dragging');
+        })
+      );
 
-      el.addEventListener('mouseleave', () => {
-        if (!isDown) return;
-        isDown = false;
-        el.classList.remove('dragging');
-      });
-
-      el.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
+      el.addEventListener('mousemove', e => {
+        if (!down) return;
         e.preventDefault();
-        const dx = e.pageX - startX;
-        el.scrollLeft = startScrollLeft - dx;
+        el.scrollLeft = startScroll - (e.pageX - startX);
       });
     }
 
-    enableDragScroll(document.getElementById('reviewsSlider'));
     enableDragScroll(document.getElementById('tradesSlider'));
+    enableDragScroll(document.getElementById('reviewsSlider'));
 
-  }); // DOMContentLoaded
-})();
-</script>
-<script>
-/* =========================
-   PHONE UX: fixed nav height + reliable swipe
-   Drop-in override
-========================= */
-(() => {
-  function isPhoneView(){
-    return window.matchMedia('(max-width: 720px)').matches;
-  }
+    /* =========================================================
+       NAV HEIGHT VAR (PHONE FIX)
+    ========================================================= */
+    function updateNavHeightVar(){
+      const nav = document.querySelector('.nav');
+      if (!nav) return;
+      document.documentElement.style.setProperty(
+        '--navh',
+        Math.round(nav.getBoundingClientRect().height) + 'px'
+      );
+    }
 
-  function updateNavHeightVar(){
-    const nav = document.querySelector('.nav');
-    if (!nav) return;
-    // include safe-area inset top if any (already added in CSS, but var helps scroll-margin, etc.)
-    const h = Math.round(nav.getBoundingClientRect().height);
-    document.documentElement.style.setProperty('--navh', h + 'px');
-  }
-
-  // Pointer-based swipe that works on iOS/Android reliably (without breaking vertical scroll)
-  function enablePhonePointerSwipe(el){
-    if (!el) return;
-
-    let down = false;
-    let startX = 0, startY = 0;
-    let startScroll = 0;
-    let decided = false;
-    let horizontal = false;
-    let pointerId = null;
-
-    const THRESH = 8;
-
-    el.addEventListener('pointerdown', (e) => {
-      if (!isPhoneView()) return;
-      if (e.pointerType !== 'touch') return; // only for phone touch
-      down = true;
-      decided = false;
-      horizontal = false;
-      pointerId = e.pointerId;
-      startX = e.clientX;
-      startY = e.clientY;
-      startScroll = el.scrollLeft;
-      // don't set capture yet; we decide direction first
-    }, { passive: true });
-
-    el.addEventListener('pointermove', (e) => {
-      if (!down || !isPhoneView()) return;
-      if (pointerId !== e.pointerId) return;
-
-      // if it can't scroll, don't interfere
-      if (el.scrollWidth <= el.clientWidth + 1) return;
-
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
-
-      if (!decided) {
-        if (Math.abs(dx) < THRESH && Math.abs(dy) < THRESH) return;
-        decided = true;
-        horizontal = Math.abs(dx) > Math.abs(dy);
-        if (horizontal) {
-          try { el.setPointerCapture(pointerId); } catch {}
-        }
-      }
-
-      if (horizontal) {
-        // prevent the page from stealing the gesture
-        e.preventDefault();
-        el.scrollLeft = startScroll - dx;
-      }
-    }, { passive: false });
-
-    const end = () => {
-      down = false;
-      decided = false;
-      horizontal = false;
-      pointerId = null;
-    };
-
-    el.addEventListener('pointerup', end, { passive: true });
-    el.addEventListener('pointercancel', end, { passive: true });
-    el.addEventListener('lostpointercapture', end, { passive: true });
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
     updateNavHeightVar();
     window.addEventListener('resize', updateNavHeightVar);
-    window.addEventListener('orientationchange', () => {
-      // iOS sometimes reports heights late
-      setTimeout(updateNavHeightVar, 60);
-      setTimeout(updateNavHeightVar, 260);
-    });
 
-    // Enable reliable swipe on the two sliders (Trades + Reviews)
-    enablePhonePointerSwipe(document.getElementById('tradesSlider'));
-    enablePhonePointerSwipe(document.getElementById('reviewsSlider'));
   });
 })();
 </script>
+
 
 </body>
 </html>
