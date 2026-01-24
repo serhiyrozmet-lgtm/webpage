@@ -1260,6 +1260,98 @@ footer{
 }
 
 </style>
+<style>
+/* =========================
+   PHONE FIXES (NAV + SLIDERS)
+   Drop-in override
+========================= */
+
+/* 1) NAV: always visible (fixed) on phone, never hides while scrolling */
+@media (max-width: 720px){
+  /* make the top bar truly fixed */
+  .nav{
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1600; /* above page content */
+    transform: translateY(0) !important;
+  }
+
+  /* push page content below the fixed nav */
+  body{
+    padding-top: calc(var(--navh, 74px) + env(safe-area-inset-top)) !important;
+  }
+
+  /* keep anchors accurate when fixed nav is used */
+  section{
+    scroll-margin-top: calc(var(--navh, 74px) + env(safe-area-inset-top) + 14px) !important;
+  }
+}
+
+/* 2) DRAWER: when menu is open, top bar must NOT be visible */
+body.drawer-open .nav{
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(-120%) !important;
+}
+
+/* 3) SLIDERS: cards take full available width on phone and never crop corners */
+@media (max-width: 720px){
+  /* use the wrap padding as the “gutter”, don't double-pad sliders */
+  #tradesSlider,
+  #reviewsSlider{
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* let shadows/rounded corners breathe (no clipping vertically) */
+  .slider{
+    gap: 14px !important;
+
+    /* keep horizontal scrolling, but do NOT clip vertical shadow/corners */
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+
+    /* remove the extra side padding that made cards exceed the visible area */
+    padding: 10px 0 16px !important;
+
+    /* snapping still works */
+    scroll-snap-type: x mandatory !important;
+    scroll-padding-left: 14px !important;
+    scroll-padding-right: 14px !important;
+
+    /* better touch behavior */
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+  }
+
+  /* Trades: full width inside the wrap (so corners are always visible) */
+  #tradesSlider .trade-slide{
+    flex: 0 0 auto !important;
+    width: calc(100%);              /* full width of the slider viewport inside wrap */
+    max-width: none !important;
+    scroll-snap-align: start !important;
+  }
+
+  /* Reviews: full width too */
+  #reviewsSlider .review-slide{
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-width: unset !important;
+    max-width: unset !important;
+    scroll-snap-align: start !important;
+  }
+}
+
+/* keep your existing smaller breakpoints working nicely */
+@media (max-width: 520px){
+  .slider{
+    scroll-padding-left: 14px !important;
+    scroll-padding-right: 14px !important;
+  }
+}
+</style>
 
 
 
@@ -2213,6 +2305,103 @@ smartSliderSwipe(document.getElementById("reviewsSlider"));
     enableDragScroll(document.getElementById('tradesSlider'));
 
   }); // DOMContentLoaded
+})();
+</script>
+<script>
+/* =========================
+   PHONE UX: fixed nav height + reliable swipe
+   Drop-in override
+========================= */
+(() => {
+  function isPhoneView(){
+    return window.matchMedia('(max-width: 720px)').matches;
+  }
+
+  function updateNavHeightVar(){
+    const nav = document.querySelector('.nav');
+    if (!nav) return;
+    // include safe-area inset top if any (already added in CSS, but var helps scroll-margin, etc.)
+    const h = Math.round(nav.getBoundingClientRect().height);
+    document.documentElement.style.setProperty('--navh', h + 'px');
+  }
+
+  // Pointer-based swipe that works on iOS/Android reliably (without breaking vertical scroll)
+  function enablePhonePointerSwipe(el){
+    if (!el) return;
+
+    let down = false;
+    let startX = 0, startY = 0;
+    let startScroll = 0;
+    let decided = false;
+    let horizontal = false;
+    let pointerId = null;
+
+    const THRESH = 8;
+
+    el.addEventListener('pointerdown', (e) => {
+      if (!isPhoneView()) return;
+      if (e.pointerType !== 'touch') return; // only for phone touch
+      down = true;
+      decided = false;
+      horizontal = false;
+      pointerId = e.pointerId;
+      startX = e.clientX;
+      startY = e.clientY;
+      startScroll = el.scrollLeft;
+      // don't set capture yet; we decide direction first
+    }, { passive: true });
+
+    el.addEventListener('pointermove', (e) => {
+      if (!down || !isPhoneView()) return;
+      if (pointerId !== e.pointerId) return;
+
+      // if it can't scroll, don't interfere
+      if (el.scrollWidth <= el.clientWidth + 1) return;
+
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+
+      if (!decided) {
+        if (Math.abs(dx) < THRESH && Math.abs(dy) < THRESH) return;
+        decided = true;
+        horizontal = Math.abs(dx) > Math.abs(dy);
+        if (horizontal) {
+          try { el.setPointerCapture(pointerId); } catch {}
+        }
+      }
+
+      if (horizontal) {
+        // prevent the page from stealing the gesture
+        e.preventDefault();
+        el.scrollLeft = startScroll - dx;
+      }
+    }, { passive: false });
+
+    const end = () => {
+      down = false;
+      decided = false;
+      horizontal = false;
+      pointerId = null;
+    };
+
+    el.addEventListener('pointerup', end, { passive: true });
+    el.addEventListener('pointercancel', end, { passive: true });
+    el.addEventListener('lostpointercapture', end, { passive: true });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    updateNavHeightVar();
+    window.addEventListener('resize', updateNavHeightVar);
+    window.addEventListener('orientationchange', () => {
+      // iOS sometimes reports heights late
+      setTimeout(updateNavHeightVar, 60);
+      setTimeout(updateNavHeightVar, 260);
+    });
+
+    // Enable reliable swipe on the two sliders (Trades + Reviews)
+    enablePhonePointerSwipe(document.getElementById('tradesSlider'));
+    enablePhonePointerSwipe(document.getElementById('reviewsSlider'));
+  });
 })();
 </script>
 
