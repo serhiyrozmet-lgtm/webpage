@@ -2028,11 +2028,12 @@ I can get my Blue CSCS card. This helped me get better site access.”</p>
     document.documentElement.style.setProperty('--navh', h + 'px');
   }
 
-  // Touch-swipe helper (fallback)
+    // Touch-swipe helper (fallback) — now actually scrolls horizontally
   function smartSliderSwipe(el){
     if(!el) return;
 
     let sx = 0, sy = 0;
+    let startScroll = 0;
     let decided = false;
     let isHorizontal = false;
 
@@ -2040,13 +2041,13 @@ I can get my Blue CSCS card. This helped me get better site access.”</p>
       if (!e.touches || e.touches.length !== 1) return;
       sx = e.touches[0].clientX;
       sy = e.touches[0].clientY;
+      startScroll = el.scrollLeft;
       decided = false;
       isHorizontal = false;
     }, { passive: true });
 
     el.addEventListener("touchmove", (e) => {
       if (!e.touches || e.touches.length !== 1) return;
-
       if (el.scrollWidth <= el.clientWidth + 1) return;
 
       const dx = e.touches[0].clientX - sx;
@@ -2058,13 +2059,19 @@ I can get my Blue CSCS card. This helped me get better site access.”</p>
         isHorizontal = Math.abs(dx) > Math.abs(dy);
       }
 
-      if (isHorizontal) e.preventDefault();
+      if (isHorizontal) {
+        e.preventDefault();
+        el.scrollLeft = startScroll - dx;
+      }
     }, { passive: false });
   }
 
-  // Reliable phone swipe using Pointer Events (iOS/Android)
+  // Reliable phone swipe using Pointer Events — force pan-x
   function enablePhonePointerSwipe(el){
     if (!el) return;
+
+    // ensure horizontal panning is allowed
+    el.style.touchAction = 'pan-x';
 
     let down = false;
     let startX = 0, startY = 0;
@@ -2078,6 +2085,9 @@ I can get my Blue CSCS card. This helped me get better site access.”</p>
     el.addEventListener('pointerdown', (e) => {
       if (!isPhoneView()) return;
       if (e.pointerType !== 'touch') return;
+
+      if (el.scrollWidth <= el.clientWidth + 1) return;
+
       down = true;
       decided = false;
       horizontal = false;
@@ -2090,8 +2100,6 @@ I can get my Blue CSCS card. This helped me get better site access.”</p>
     el.addEventListener('pointermove', (e) => {
       if (!down || !isPhoneView()) return;
       if (pointerId !== e.pointerId) return;
-
-      if (el.scrollWidth <= el.clientWidth + 1) return;
 
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
