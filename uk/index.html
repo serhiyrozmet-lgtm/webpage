@@ -1374,6 +1374,50 @@ body.drawer-open .nav{
   }
 }
 
+  /* =========================================
+   PHONE: centered & bigger cards (stable)
+========================================= */
+@media (max-width: 720px){
+
+  /* 1️⃣ Center the slider itself on the page */
+  #tradesSlider,
+  #reviewsSlider{
+    width: 100%;
+    max-width: 94vw;              /* 🔥 controls how BIG the card feels */
+    margin-left: auto;
+    margin-right: auto;
+
+    padding-left: 12px;           /* small safe padding */
+    padding-right: 12px;
+    scroll-padding-left: 12px;
+    scroll-padding-right: 12px;
+
+    gap: 16px;
+  }
+
+  /* 2️⃣ Each card fills the centered viewport */
+  #tradesSlider .trade-slide,
+  #reviewsSlider .review-slide{
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100%;
+
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  /* 3️⃣ Make review cards visually BIGGER */
+  .review-slide{
+    min-height: 360px;            /* 🔥 taller = more premium */
+    border-radius: 30px;
+  }
+
+  /* 4️⃣ Center content inside review cards */
+  .review-inner{
+    align-items: center;
+  }
+}
+
 </style>
 
 
