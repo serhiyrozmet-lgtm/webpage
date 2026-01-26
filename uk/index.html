@@ -1334,7 +1334,9 @@ body.drawer-open .nav{
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
   scrollbar-width: none;
-  touch-action: pan-x;
+  touch-action: auto !important;              /* or: manipulation */
+  overscroll-behavior-x: contain;             /* keep horizontal swipe contained */
+  overflow-y: visible !important;
 }
 .slider::-webkit-scrollbar{ display:none; }
 
