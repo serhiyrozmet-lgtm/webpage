@@ -287,34 +287,35 @@ body::after{
   border-radius: 999px;
 }
 
+.drawer,
 .drawer-overlay{
   position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.62);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 220ms ease;
-  z-index: 1200;
+  left: 0; right: 0; top: 0; bottom: 0;
+  height: 100dvh;              /* ✅ modern iOS */
+  height: 100vh;               /* fallback */
+  min-height: -webkit-fill-available; /* ✅ older iOS */
 }
+
+/* Make drawer match the root page exactly (no “lighter” band) */
 .drawer{
-  position: fixed;
-  inset: 0;
-  background: rgba(7,8,10,0.92);
-  backdrop-filter: blur(18px);
-  transform: translateX(110%);
-  transition: transform 260ms cubic-bezier(.2,.8,.2,1);
-  z-index: 1300;
-
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-
-  overflow-y: auto;                 /* ✅ scroll inside drawer */
+  background: rgba(7,8,10,0.92); /* or use #07080a if you want fully solid */
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;  /* stop rubber-band showing behind */
+}
 
-  /* ✅ avoid iPhone white block / safe area */
-  padding-bottom: calc(max(18px, env(safe-area-inset-bottom)) + 56px);
+/* Overlay also must cover the dynamic viewport */
+.drawer-overlay{
+  background: rgba(0,0,0,0.62);
+}
+
+/* Stronger scroll lock for iOS: avoid body bounce revealing white */
+body.drawer-open{
+  overflow: hidden;
+  position: fixed;   /* ✅ important for iOS Safari */
+  width: 100%;
+  left: 0;
+  right: 0;
+  overscroll-behavior: none;
 }
 
 .drawer-top{
@@ -2318,36 +2319,41 @@ b.addEventListener('click', () => {
       body.classList.toggle('footer-in-view', shouldJump);
     }
 
-    function openDrawer(){
-      if (!hamburger || !drawer || !overlay) return;
+let scrollYBeforeDrawer = 0;
 
-      body.classList.add('drawer-open');
-      hamburger.setAttribute('aria-expanded','true');
+function openDrawer(){
+  if (!hamburger || !drawer || !overlay) return;
 
-      // Keep aria-hidden in sync (and avoid focus being hidden)
-      drawer.setAttribute('aria-hidden','false');
-      overlay.setAttribute('aria-hidden','false');
+  scrollYBeforeDrawer = window.scrollY || 0;
 
-      // focus first control in dialog
-      closeBtn?.focus();
+  // Lock body in place (iOS Safari fix)
+  document.body.style.top = `-${scrollYBeforeDrawer}px`;
+  document.body.classList.add('drawer-open');
 
-      body.classList.remove('footer-in-view');
-    }
+  hamburger.setAttribute('aria-expanded','true');
+  drawer.setAttribute('aria-hidden','false');
+  overlay.setAttribute('aria-hidden','false');
 
-    function closeDrawer(){
-      if (!hamburger || !drawer || !overlay) return;
+  closeBtn?.focus();
+  document.body.classList.remove('footer-in-view');
+}
+function closeDrawer(){
+  if (!hamburger || !drawer || !overlay) return;
 
-      // move focus OUT before hiding drawer to avoid aria-hidden warning
-      if (drawer.contains(document.activeElement)) hamburger.focus();
+  if (drawer.contains(document.activeElement)) hamburger.focus();
 
-      body.classList.remove('drawer-open');
-      hamburger.setAttribute('aria-expanded','false');
+  document.body.classList.remove('drawer-open');
+  document.body.style.top = '';
 
-      drawer.setAttribute('aria-hidden','true');
-      overlay.setAttribute('aria-hidden','true');
+  // Restore scroll position
+  window.scrollTo(0, scrollYBeforeDrawer);
 
-      requestAnimationFrame(recomputeFooterState);
-    }
+  hamburger.setAttribute('aria-expanded','false');
+  drawer.setAttribute('aria-hidden','true');
+  overlay.setAttribute('aria-hidden','true');
+
+  requestAnimationFrame(recomputeFooterState);
+}
 
     hamburger?.addEventListener('click', () => {
       body.classList.contains('drawer-open') ? closeDrawer() : openDrawer();
