@@ -1522,22 +1522,19 @@ body.drawer-open .nav{
 }
 
 
-  @media (max-width: 720px){
-  /* iOS/phone fix:
-     - vertical swipes should scroll the PAGE
-     - horizontal swipes should move the slider
-     - prevent the slider from “rubber-banding” vertically (the “card dragging” feel) */
+@media (max-width: 720px){
   .slider{
     overflow-y: hidden !important;
-    touch-action: pan-y;
+    touch-action: auto !important;     /* ✅ allow browser to decide */
   }
-  /* Prevent images from being “dragged” */
+
+  /* Optional: stops image ghost-drag, but keeps taps possible */
   .slider img{
     -webkit-user-drag: none;
     user-select: none;
-    pointer-events: none;
   }
 }
+
 
 /* ===== TRADES SECTION SPACING ===== */
 #trades h2{
@@ -2467,6 +2464,43 @@ initSwipeSlider(tradesSlider, tradesDots, { drag: false });
 initSwipeSlider(reviewsSlider, reviewsDots, { drag: true });
 
   }); // DOMContentLoaded
+})();
+
+    (function () {
+  const sliders = document.querySelectorAll('.slider');
+
+  sliders.forEach(slider => {
+    let startX = 0, startY = 0, locked = null;
+
+    slider.addEventListener('touchstart', (e) => {
+      const t = e.touches[0];
+      startX = t.clientX;
+      startY = t.clientY;
+      locked = null;
+    }, { passive: true });
+
+    slider.addEventListener('touchmove', (e) => {
+      if (!e.touches || e.touches.length !== 1) return;
+
+      const t = e.touches[0];
+      const dx = t.clientX - startX;
+      const dy = t.clientY - startY;
+
+      if (locked === null) {
+        // decide direction after a small threshold
+        if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
+          locked = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+        } else {
+          return;
+        }
+      }
+
+      // If user is swiping horizontally, prevent vertical page scroll "rubber band"
+      if (locked === 'x') {
+        e.preventDefault(); // must be non-passive
+      }
+    }, { passive: false });
+  });
 })();
 </script>
 
