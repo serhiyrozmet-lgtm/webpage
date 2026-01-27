@@ -311,12 +311,10 @@ body::after{
   gap: 14px;
 
   overflow-y: auto;                 /* ✅ scroll inside drawer */
-  -webkit-overflow-scrolling: touch;
-    height: 100dvh;     /* iOS 16+ correct dynamic viewport */
-  max-height: 100dvh;
 
-  /* ✅ avoid iPhone white block / safe area */
-  padding-bottom: env(safe-area-inset-bottom);
+  clip-path: inset(0 0 env(safe-area-inset-bottom) 0);
+
+
 }
 
   /* === iOS SAFARI FIX: remove white safe-area gap in drawer === */
@@ -324,8 +322,7 @@ body::after{
   background-color: #07080a; /* MUST be solid, not transparent */
   background-clip: padding-box;
 
-  /* extend background into safe area */
-  padding-bottom: env(safe-area-inset-bottom);
+
 
   overscroll-behavior: none;
 }
