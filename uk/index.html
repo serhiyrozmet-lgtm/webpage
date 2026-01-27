@@ -299,7 +299,7 @@ body::after{
 .drawer{
   position: fixed;
   inset: 0;
-  background: #07080a;
+  background: rgba(7,8,10,0.92);
   backdrop-filter: blur(18px);
   transform: translateX(110%);
   transition: transform 260ms cubic-bezier(.2,.8,.2,1);
@@ -315,28 +315,6 @@ body::after{
 
   /* ✅ avoid iPhone white block / safe area */
   padding-bottom: calc(max(18px, env(safe-area-inset-bottom)) + 56px);
-}
-
-  /* === iOS SAFARI FIX: remove white safe-area gap in drawer === */
-.drawer{
-  background-color: #07080a; /* MUST be solid, not transparent */
-  background-clip: padding-box;
-
-  /* extend background into safe area */
-  padding-bottom: calc(
-    max(18px, env(safe-area-inset-bottom))
-  );
-
-  overscroll-behavior: none;
-}
-/* Stop iOS rubber-band showing white under drawer */
-.drawer,
-.drawer *{
-  -webkit-overflow-scrolling: touch;
-}
-
-html, body{
-  background-color: #07080a;
 }
 
 .drawer-top{
@@ -879,49 +857,6 @@ h2{
 .fab-left{ left: 18px; background: rgba(37,211,102,0.92); }
 .fab-right{ right: 18px; background: rgba(255,138,43,0.92); }
 .fab svg{ width: 30px; height: 30px; }
-
-  /* =========================
-   FAB PULSE (WhatsApp / Phone)
-========================= */
-.fab{
-  transform: translateZ(0);            /* smoother on iPhone */
-  will-change: transform, box-shadow;
-}
-
-/* main pulse */
-.fab.fab-pulse{
-  animation: fabPulse 1.8s ease-in-out infinite;
-}
-
-/* soft ring pulse */
-.fab.fab-pulse::after{
-  content:"";
-  position:absolute;
-  inset: -8px;
-  border-radius: inherit;
-  border: 1px solid rgba(255,255,255,0.18);
-  opacity: 0;
-  transform: scale(0.9);
-  animation: fabRing 1.8s ease-out infinite;
-  pointer-events:none;
-}
-
-@keyframes fabPulse{
-  0%, 100% { transform: translateZ(0) scale(1); }
-  50%      { transform: translateZ(0) scale(1.06); }
-}
-
-@keyframes fabRing{
-  0%   { opacity: 0; transform: scale(0.92); }
-  35%  { opacity: 0.35; }
-  100% { opacity: 0; transform: scale(1.22); }
-}
-
-/* accessibility */
-@media (prefers-reduced-motion: reduce){
-  .fab.fab-pulse,
-  .fab.fab-pulse::after{ animation: none !important; }
-}
 
 /* =========================================================
    FOOTER
@@ -2177,7 +2112,7 @@ I can get my Blue CSCS card. This helped me get better site access.”</p>
 
   <!-- ===== Fixed Buttons ===== -->
   <!-- Replace PHONE_NUMBER with country code format (e.g. 447555123456) -->
-  <a class="fab fab-left fab-pulse"
+  <a class="fab fab-left"
      href="https://wa.me/447759217574"
      target="_blank"
      rel="noopener"
@@ -2188,7 +2123,7 @@ I can get my Blue CSCS card. This helped me get better site access.”</p>
     </svg>
   </a>
 
-  <a class="fab fab-right fab-pulse"
+  <a class="fab fab-right"
      href="tel:+447759217574"
      aria-label="Phone">
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
