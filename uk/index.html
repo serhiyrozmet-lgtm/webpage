@@ -299,7 +299,7 @@ body::after{
 .drawer{
   position: fixed;
   inset: 0;
-  background: rgba(7,8,10,0.92);
+  background: #07080a;
   backdrop-filter: blur(18px);
   transform: translateX(110%);
   transition: transform 260ms cubic-bezier(.2,.8,.2,1);
@@ -312,10 +312,29 @@ body::after{
 
   overflow-y: auto;                 /* ✅ scroll inside drawer */
   -webkit-overflow-scrolling: touch;
+    height: 100dvh;     /* iOS 16+ correct dynamic viewport */
+  max-height: 100dvh;
 
   /* ✅ avoid iPhone white block / safe area */
-  padding-bottom: calc(max(18px, env(safe-area-inset-bottom)) + 56px);
+  padding-bottom: env(safe-area-inset-bottom);
 }
+
+  /* === iOS SAFARI FIX: remove white safe-area gap in drawer === */
+.drawer{
+  background-color: #07080a; /* MUST be solid, not transparent */
+  background-clip: padding-box;
+
+  /* extend background into safe area */
+  padding-bottom: env(safe-area-inset-bottom);
+
+  overscroll-behavior: none;
+}
+/* Stop iOS rubber-band showing white under drawer */
+.drawer,
+.drawer *{
+  -webkit-overflow-scrolling: touch;
+}
+
 html, body{
   background-color: #07080a;
 }
