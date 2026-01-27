@@ -299,31 +299,17 @@ body::after{
 .drawer{
   position: fixed;
   inset: 0;
-  background: #07080a;
+  background: rgba(7,8,10,0.92);   /* keep premium translucent look */
   backdrop-filter: blur(18px);
-  transform: translateX(110%);
-  transition: transform 260ms cubic-bezier(.2,.8,.2,1);
-  z-index: 1300;
 
   padding: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-
-  overflow-y: auto;                 /* ✅ scroll inside drawer */
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-    height: 100dvh;     /* iOS 16+ correct dynamic viewport */
+
+  height: 100dvh;
   max-height: 100dvh;
 }
 
-  /* === iOS SAFARI FIX: remove white safe-area gap in drawer === */
-.drawer{
-  background-color: #07080a; /* MUST be solid, not transparent */
-  background-clip: padding-box;
-
-
-  overscroll-behavior: none;
-}
 /* Stop iOS rubber-band showing white under drawer */
 .drawer,
 .drawer *{
