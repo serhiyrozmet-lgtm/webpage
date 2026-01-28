@@ -5,8 +5,8 @@
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>NVQ + CSCS / IPAF — Швидко та легко</title>
-  <meta name="description" content="Отримай CSCS & IPAF Card без навчання. Офіційна оцінка вашого реального досвіду в будівництві." />
+  <title>NVQ, CSCS та IPAF у Великій Британії — Швидко та офіційно</title>
+  <meta name="description" content="Отримайте NVQ, CSCS та IPAF у Великій Британії без навчання. Офіційна оцінка реального будівельного досвіду та супровід до отримання карти." />
 
   <!-- Font (close to clean modern Webvatra vibe) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1606,12 +1606,12 @@ body.drawer-open .nav{
   overscroll-behavior: contain;
 }
 
-/* Smaller header area where logo is */
 .drawer-top{
   padding-top: 2px;
   padding-bottom: 8px;
   margin-bottom: 4px;
 }
+
 
 /* If your logo inside drawer is an <img>, make it smaller */
 .drawer-top img{
@@ -1620,6 +1620,44 @@ body.drawer-open .nav{
   display: block;
 }
 
+
+
+  /* =========================================
+   PHONE LANDSCAPE FIX (top bar + trades)
+   Put at the END of your <style>
+========================================= */
+
+/* 1) In landscape on phones, force "mobile nav" (hamburger) */
+@media (orientation: landscape) and (max-height: 520px){
+  .nav-links{ display: none !important; }
+  .hamburger{ display: inline-flex !important; }
+  #langBtn{ display: none !important; }
+}
+
+/* 2) In landscape on phones, force Trades slider to show 1 slide */
+@media (orientation: landscape) and (max-height: 520px){
+  #tradesSlider{
+    /* keep nice padding so corners are visible */
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    scroll-padding-left: 16px !important;
+    scroll-padding-right: 16px !important;
+    gap: 14px !important;
+
+    scroll-snap-type: x mandatory !important;
+  }
+
+  #tradesSlider .trade-slide{
+    /* 1 card per view */
+    flex: 0 0 calc(100% - 32px) !important;
+    width: calc(100% - 32px) !important;
+    scroll-snap-align: start !important;
+    scroll-snap-stop: always;
+  }
+
+  /* ensure dots are visible in this mode */
+  #tradesDots{ display: flex !important; }
+}
 
 </style>
 
