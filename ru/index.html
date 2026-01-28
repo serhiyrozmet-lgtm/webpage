@@ -1,8 +1,10 @@
 <!doctype html>
 <html lang="uk">
 <head>
+  <script>document.documentElement.classList.add('js');</script>
+
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>NVQ + CSCS / IPAF — Швидко та легко</title>
   <meta name="description" content="Отримай CSCS & IPAF Card без навчання. Офіційна оцінка вашого реального досвіду в будівництві." />
 
@@ -11,7 +13,31 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
-  <style>
+
+<style>
+  html {
+  background-color: #07080a;
+}
+
+
+
+body.drawer-open{
+  background-color: #07080a;
+}
+
+/* Only hide animated elements when JS is running */
+.js .reveal-title,
+.js .reveal-side{
+  opacity: 0;
+}
+
+/* When visible */
+.reveal-title.is-visible,
+.reveal-side.is-visible{
+  opacity: 1;
+  transform: translate3d(0,0,0);
+}
+
 /* =======================
    VARIABLES + GLOBAL
 ======================= */
@@ -32,7 +58,18 @@
 }
 
 *{ box-sizing: border-box; }
+
+html, body{
+  width: 100%;
+  overflow-x: hidden; /* hard stop */
+}
 html{ scroll-behavior: smooth; }
+
+.wrap{
+  max-width: 1120px;
+  width: 100%;
+  overflow-x: hidden; /* extra safety */
+}
 
 body{
   margin: 0;
@@ -49,7 +86,7 @@ body::after{
   content:"";
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
 
   background-image:
@@ -71,29 +108,20 @@ body::after{
   to   { background-position: 260px 260px, -520px 520px; }
 }
 
-
 /* =======================
    ORANGE GLOW UTILITIES
 ======================= */
-
-/* soft ambient glow */
-.glow-soft{
-  position: relative;
-}
+.glow-soft{ position: relative; }
 .glow-soft::after{
   content:"";
   position:absolute;
   inset: -40px;
-  background:
-    radial-gradient(420px 220px at 30% 10%, rgba(255,138,43,0.22), transparent 65%);
+  background: radial-gradient(420px 220px at 30% 10%, rgba(255,138,43,0.22), transparent 65%);
   pointer-events:none;
   z-index: -1;
 }
 
-/* stronger accent glow */
-.glow-strong{
-  position: relative;
-}
+.glow-strong{ position: relative; }
 .glow-strong::after{
   content:"";
   position:absolute;
@@ -105,7 +133,6 @@ body::after{
   z-index: -1;
 }
 
-/* subtle edge highlight */
 .glow-edge{
   box-shadow:
     0 18px 60px rgba(0,0,0,0.55),
@@ -113,14 +140,13 @@ body::after{
     0 0 80px rgba(255,138,43,0.18);
 }
 
-
-/* =======================
+/* =========================================================
    TOP NAV
-======================= */
+========================================================= */
 .nav{
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 1500;
   height: var(--navh);
   backdrop-filter: blur(16px);
   background: rgba(7,8,10,0.70);
@@ -147,14 +173,13 @@ body::after{
   user-select: none;
 }
 .logo-img{
-  height: 50px;          /* matches nav height perfectly */
+  height: 107px;
   width: auto;
   display: block;
 }
-
 .logo-badge{
   width: 34px;
-  height: 34px;
+  height: 10px;
   border-radius: 14px;
   background: linear-gradient(135deg, rgba(255,138,43,0.95), rgba(255,106,0,0.35));
   box-shadow: 0 18px 60px rgba(255,122,20,0.22);
@@ -184,9 +209,9 @@ body::after{
   background: rgba(255,255,255,0.04);
 }
 
-/* =======================
+/* =========================================================
    LANGUAGE (DESKTOP)
-======================= */
+========================================================= */
 .lang-wrap{ position: relative; }
 
 .lang{
@@ -203,13 +228,11 @@ body::after{
   user-select: none;
   border: 0;
 }
-
 .lang .dot{
   width: 8px; height: 8px; border-radius: 999px;
   background: rgba(255,138,43,0.95);
   box-shadow: 0 12px 26px rgba(255,138,43,0.22);
 }
-
 .lang-caret{ width: 18px; height: 18px; opacity: .9; }
 
 .lang-menu{
@@ -245,9 +268,9 @@ body::after{
 .lang-opt:hover{ background: rgba(255,255,255,0.06); }
 .lang-opt.active{ background: rgba(255,138,43,0.14); }
 
-/* =======================
+/* =========================================================
    HAMBURGER + DRAWER
-======================= */
+========================================================= */
 .hamburger{
   display: none;
   width: 46px;
@@ -286,10 +309,17 @@ body::after{
   transform: translateX(110%);
   transition: transform 260ms cubic-bezier(.2,.8,.2,1);
   z-index: 1300;
+
   padding: 18px;
   display: flex;
   flex-direction: column;
   gap: 14px;
+
+  overflow-y: auto;                 /* ✅ scroll inside drawer */
+  -webkit-overflow-scrolling: touch;
+
+  /* ✅ avoid iPhone white block / safe area */
+  padding-bottom: calc(max(18px, env(safe-area-inset-bottom)) + 56px);
 }
 
 .drawer-top{
@@ -325,7 +355,10 @@ body::after{
 }
 .drawer a:hover{ background: rgba(255,255,255,0.08); transform: translateY(-1px); }
 
-body.drawer-open{ overflow: hidden; }
+body.drawer-open{
+  overflow: hidden;
+  touch-action: none;
+}
 body.drawer-open .drawer-overlay{ opacity: 1; pointer-events: auto; }
 body.drawer-open .drawer{ transform: translateX(0%); }
 
@@ -354,9 +387,9 @@ body.drawer-open .drawer{ transform: translateX(0%); }
   color: rgba(255,255,255,0.96);
 }
 
-/* =======================
+/* =========================================================
    LAYOUT + SURFACES
-======================= */
+========================================================= */
 .wrap{
   max-width: var(--maxw);
   margin: 0 auto;
@@ -405,9 +438,9 @@ section{
 
 .surface > *{ position: relative; }
 
-/* =======================
+/* =========================================================
    TYPOGRAPHY
-======================= */
+========================================================= */
 h1{
   margin: 0 0 12px;
   font-size: clamp(30px, 4vw, 54px);
@@ -431,9 +464,9 @@ h2{
   max-width: 90ch;
 }
 
-/* =======================
+/* =========================================================
    REVEAL ANIMATIONS
-======================= */
+========================================================= */
 .reveal-title{
   opacity: 0;
   transform: translate3d(0, 28px, 0);
@@ -455,9 +488,9 @@ h2{
   transform: translate3d(0,0,0);
 }
 
-/* =======================
+/* =========================================================
    HERO EXTRAS
-======================= */
+========================================================= */
 .kicker{
   display: inline-flex;
   align-items: center;
@@ -486,18 +519,15 @@ h2{
   color: var(--text);
   font-weight: 900;
   line-height: 1.6;
-}
-.emph{
   position: relative;
   box-shadow:
     0 20px 70px rgba(0,0,0,0.55),
     0 0 120px rgba(255,138,43,0.22);
 }
 
-
-/* =======================
+/* =========================================================
    BULLETS
-======================= */
+========================================================= */
 .bullets{
   margin: 12px 0 0;
   padding: 0;
@@ -525,9 +555,9 @@ h2{
   box-shadow: 0 10px 24px rgba(255,138,43,0.14);
 }
 
-/* =======================
+/* =========================================================
    ACCORDION
-======================= */
+========================================================= */
 .accordion{
   display: grid;
   gap: 10px;
@@ -579,9 +609,9 @@ h2{
 .acc-item.open .acc-panel{ max-height: 420px; }
 .acc-item.open .chev{ transform: rotate(180deg); }
 
-/* =======================
+/* =========================================================
    PRICING
-======================= */
+========================================================= */
 .price-grid{
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -613,9 +643,9 @@ h2{
   color: rgba(255,138,43,0.95);
 }
 
-/* =======================
+/* =========================================================
    WHY US
-======================= */
+========================================================= */
 .why{
   margin-top: 12px;
   display: grid;
@@ -630,48 +660,90 @@ h2{
   font-weight: 800;
 }
 
-/* =======================
-   DOTS (SLIDERS)
-======================= */
+/* =========================
+   DOTS — FORCE PERFECT CIRCLES
+========================= */
+/* =========================
+   DOTS — CENTER & SPACING FIX
+========================= */
+
 .dots{
-  display:flex;
-  justify-content:center;
-  gap: 9px;
-  margin-top: 10px;
+  display: flex;
+  justify-content: center;   /* center horizontally */
+  align-items: center;
+
+  gap: 10px;                 /* space between dots */
+
+  margin: 14px auto 0;       /* center container under slider */
+  width: 100%;
 }
-.dot{
-  width: 8px; height: 8px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.25);
-  transition: transform 180ms ease, background 180ms ease;
+
+.dots .dot{
+  all: unset;                 /* 🔥 nukes ALL button defaults */
+  display: block;
+
+  width: 8px;
+  aspect-ratio: 1 / 1;        /* 🔥 guarantees square */
+  height: auto;
+
+  border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+
+  cursor: pointer;
 }
-.dot.active{
-  background: rgba(255,138,43,0.92);
+
+.dots .dot.active{
+  background: var(--orange);
   transform: scale(1.25);
 }
 
-/* =======================
-   SLIDER BASE (MOBILE ONLY)
-   IMPORTANT: No scroll-trap!
-======================= */
+
+/* =========================================================
+   SLIDER BASE
+   IMPORTANT: No vertical scroll-trap!
+========================================================= */
+/* =========================================================
+   SLIDER — allow vertical page scroll + horizontal swipe
+========================================================= */
+/* ===== Slider must allow vertical page scroll + horizontal swipe ===== */
 .slider{
   display: flex;
-  gap: 18px;
+  overflow-x: auto;
+  overflow-y: visible;                 /* IMPORTANT: don't block vertical */
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+
+  /* IMPORTANT: allow normal vertical page scroll even if finger starts here */
+  touch-action: auto;
+
+  /* your spacing */
+  padding: 0 16px;
+  gap: 14px;
+
+  /* prevent weird widths */
+  width: 100%;
+  max-width: 100%;
 }
 
-/* Hide scrollbars when slider is enabled */
-.slider::-webkit-scrollbar{ display:none; }
+/* Snap each card */
+.trade-slide,
+.review-slide{
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+}
 
-/* =======================
+/* Hide horizontal scrollbar (nice on phone) */
+.slider::-webkit-scrollbar{ display:none; }
+.slider{ scrollbar-width: none; }
+/* =========================================================
    TRADES
-======================= */
+========================================================= */
 #tradesSlider .trade-slide{
   border-radius: 22px;
   background: rgba(255,255,255,0.05);
   overflow: hidden;
   box-shadow: 0 18px 55px rgba(0,0,0,0.35);
 }
-
 #tradesSlider .trade-img{
   width: 100%;
   aspect-ratio: 1000 / 630;
@@ -691,9 +763,9 @@ h2{
   font-size: 16px;
 }
 
-/* =======================
-   REVIEWS ✅ FIXED HEIGHT + PHOTO SAME HEIGHT ON DESKTOP
-======================= */
+/* =========================================================
+   REVIEWS
+========================================================= */
 .review-slide{
   scroll-snap-align: center;
   min-width: min(860px, 92vw);
@@ -702,9 +774,7 @@ h2{
   box-shadow: 0 18px 60px rgba(0,0,0,0.45);
   position: relative;
   overflow: hidden;
-
-  /* fallback */
-  min-height: 320px;
+  min-height: 320px; /* fallback */
 }
 .review-slide::before{
   content:"";
@@ -724,30 +794,20 @@ h2{
   opacity: 0.95;
   pointer-events:none;
 }
-
 .review-inner{
   position: relative;
   padding: 24px;
-
   display: grid;
   grid-template-columns: 220px 1fr;
   gap: 18px;
-
-  /* default */
-  align-items: start;
+  align-items: start; /* default */
 }
-
 .review-photo{
   width: 220px;
-
-  /* default (mobile overrides will change anyway) */
   aspect-ratio: 1 / 1;
-
   border-radius: 22px;
   background: rgba(0,0,0,0.22);
   overflow: hidden;
-
-  /* padding look */
   box-shadow: inset 0 0 0 10px rgba(255,255,255,0.03);
 }
 .review-photo img{
@@ -757,7 +817,6 @@ h2{
   display: block;
   filter: contrast(1.02);
 }
-
 .review-name{
   font-weight: 900;
   font-size: 22px;
@@ -780,9 +839,9 @@ h2{
   white-space: pre-line;
 }
 
-/* =======================
+/* =========================================================
    FIXED BUTTONS
-======================= */
+========================================================= */
 .fab{
   position: fixed;
   bottom: 18px;
@@ -804,9 +863,52 @@ h2{
 .fab-right{ right: 18px; background: rgba(255,138,43,0.92); }
 .fab svg{ width: 30px; height: 30px; }
 
-/* =======================
+    /* =========================
+   FAB PULSE (WhatsApp / Phone)
+========================= */
+.fab{
+  transform: translateZ(0);            /* smoother on iPhone */
+  will-change: transform, box-shadow;
+}
+
+/* main pulse */
+.fab.fab-pulse{
+  animation: fabPulse 1.8s ease-in-out infinite;
+}
+
+/* soft ring pulse */
+.fab.fab-pulse::after{
+  content:"";
+  position:absolute;
+  inset: -8px;
+  border-radius: inherit;
+  border: 1px solid rgba(255,255,255,0.18);
+  opacity: 0;
+  transform: scale(0.9);
+  animation: fabRing 1.8s ease-out infinite;
+  pointer-events:none;
+}
+
+@keyframes fabPulse{
+  0%, 100% { transform: translateZ(0) scale(1); }
+  50%      { transform: translateZ(0) scale(1.06); }
+}
+
+@keyframes fabRing{
+  0%   { opacity: 0; transform: scale(0.92); }
+  35%  { opacity: 0.35; }
+  100% { opacity: 0; transform: scale(1.22); }
+}
+
+/* accessibility */
+@media (prefers-reduced-motion: reduce){
+  .fab.fab-pulse,
+  .fab.fab-pulse::after{ animation: none !important; }
+}
+
+/* =========================================================
    FOOTER
-======================= */
+========================================================= */
 footer{
   background: rgba(7,8,10,0.82);
   backdrop-filter: blur(16px);
@@ -856,9 +958,9 @@ footer{
 .footer-center{ justify-content:center; text-align:center; width:100%; }
 .footer-copy{ width:100%; }
 
-/* =======================
-   RESPONSIVE
-======================= */
+/* =========================================================
+   RESPONSIVE (ORIGINAL RULES)
+========================================================= */
 
 /* HERO full screen on laptop */
 @media (min-width: 900px){
@@ -887,78 +989,27 @@ footer{
   #tradesDots{ display:none; }
 }
 
-/* ✅ DESKTOP: fixed card height + photo equals the card height (with padding) */
+/* Desktop: fixed card height + photo equals the card height (with padding) */
 @media (min-width: 900px){
   .review-slide{
-    height: 360px;            /* 👈 adjust: 340–420px */
+    height: 360px;
     min-height: unset;
   }
-
   .review-inner{
     height: 100%;
-    align-items: stretch;     /* 👈 allows photo + text column to fill height */
+    align-items: stretch;
   }
-
   .review-photo{
-    height: 100%;             /* 👈 photo equals card height */
-    aspect-ratio: auto;       /* 👈 stop forcing a square on desktop */
+    height: 100%;
+    aspect-ratio: auto;
   }
-
   .review-photo img{
     height: 100%;
     object-fit: cover;
   }
 }
 
-/* Mobile: sliders enabled (Trades + Reviews) WITHOUT vertical scroll trapping */
-@media (max-width: 899px){
-  .slider{
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
 
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-
-    padding: 18px 18px 22px;
-    scroll-padding-left: 18px;
-    scroll-padding-right: 18px;
-
-    scrollbar-width: none;
-
-    overscroll-behavior-x: contain;
-    overscroll-behavior-y: auto;
-    touch-action: pan-x;
-  }
-
-  #tradesSlider .trade-slide{
-    flex: 0 0 auto;
-    width: calc(110% - 0px);
-    scroll-snap-align: center;
-  }
-
-  #reviewsSlider .review-slide{
-    flex: 0 0 auto;
-    width: calc(100% - 0px);
-    scroll-snap-align: center;
-    min-width: unset;
-    max-width: unset;
-    min-height: unset;
-  }
-
-  /* On mobile we can allow the photo to behave like before */
-  .review-inner{
-    grid-template-columns: 92px 1fr;
-    align-items: center;
-  }
-  .review-photo{
-    width: 92px;
-    aspect-ratio: 1 / 1;
-    border-radius: 18px;
-    box-shadow: inset 0 0 0 6px rgba(255,255,255,0.03);
-    height: auto; /* keep square */
-  }
-}
 
 /* Smaller UI tweaks */
 @media (max-width: 720px){
@@ -973,8 +1024,14 @@ footer{
 
   #tradesSlider{ padding: 10px 18px 14px; }
 
-  body.footer-in-view:not(.drawer-open) .fab{ bottom: 92px; }
+  body.footer-in-view:not(.drawer-open) .fab{ bottom: 140px; }
   .footer-stack{ flex-direction: column; align-items: center; gap: 10px; }
+
+
+  /* Extra breathing room for Trades section title + slider (mobile) */
+  #trades .surface{ padding-top: 34px; }
+  #trades .reveal-title{ margin-top: 0; margin-bottom: 18px; }
+
 }
 
 @media (max-width: 520px){
@@ -1000,7 +1057,7 @@ footer{
   }
 }
 
-/* DESKTOP: reviews slider has a centered viewport + fixed card width */
+/* Desktop: reviews slider has a centered viewport + fixed card width */
 @media (min-width: 900px){
   #reviewsSlider{
     display: flex;
@@ -1032,16 +1089,14 @@ footer{
   }
 }
 
-/* =======================
+/* =========================================================
    HERO (PROMO, NOT A CARD)
-======================= */
+========================================================= */
 #hero .surface.hero{
   padding-top: 34px;
   padding-bottom: 26px;
   position: relative;
 }
-
-/* soft orange glow just for hero */
 #hero .surface.hero::before{
   content:"";
   position:absolute;
@@ -1063,7 +1118,6 @@ footer{
   flex-wrap: wrap;
   margin-bottom: 10px;
 }
-
 .hero-badges{
   display:flex;
   gap: 10px;
@@ -1157,14 +1211,13 @@ footer{
   font-weight: 900;
 }
 
-/* CTA buttons (optional, they match your floating buttons) */
+/* CTA buttons */
 .hero-cta{
   margin-top: 14px;
   display:flex;
   gap: 12px;
   flex-wrap: wrap;
 }
-
 .hero-btn{
   display:inline-flex;
   align-items:center;
@@ -1218,7 +1271,7 @@ footer{
   100%{ box-shadow: 0 0 0 0 rgba(255,138,43,0.0); }
 }
 
-/* mobile refinements */
+/* hero mobile refinements */
 @media (max-width: 720px){
   #hero .surface.hero{ padding-top: 24px; }
   .hero-br{ display:block; }
@@ -1226,6 +1279,347 @@ footer{
   .hero-title{ font-size: clamp(30px, 8.6vw, 42px); }
   .hero-steps{ font-size: 14px; }
 }
+
+/* =========================================================
+   PHONE FIXES (NAV + SLIDERS)
+   Drop-in override (kept same behavior)
+========================================================= */
+
+/* 1) NAV: always visible (fixed) on phone, never hides while scrolling */
+@media (max-width: 720px){
+  .nav{
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1600;
+    transform: translateY(0) !important;
+  }
+
+  /* push content below fixed nav */
+  body{
+    padding-top: calc(var(--navh, 74px) + env(safe-area-inset-top)) !important;
+  }
+
+  /* keep anchors accurate */
+  section{
+    scroll-margin-top: calc(var(--navh, 74px) + env(safe-area-inset-top) + 14px) !important;
+  }
+}
+
+/* 2) DRAWER: when menu is open, top bar must NOT be visible */
+body.drawer-open .nav{
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(-120%) !important;
+}
+
+
+
+/* keep your existing smaller breakpoint tweak */
+@media (max-width: 520px){
+  .slider{
+    scroll-padding-left: 14px !important;
+    scroll-padding-right: 14px !important;
+  }
+}
+</style>
+
+
+
+</style>
+<style>
+/* =========================
+   PHONE FIXES (NAV + SLIDERS)
+   Drop-in override
+========================= */
+
+/* 1) NAV: always visible (fixed) on phone, never hides while scrolling */
+@media (max-width: 720px){
+  /* make the top bar truly fixed */
+  .nav{
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1600; /* above page content */
+    transform: translateY(0) !important;
+  }
+
+  /* push page content below the fixed nav */
+  body{
+    padding-top: calc(var(--navh, 74px) + env(safe-area-inset-top)) !important;
+  }
+
+  /* keep anchors accurate when fixed nav is used */
+  section{
+    scroll-margin-top: calc(var(--navh, 74px) + env(safe-area-inset-top) + 14px) !important;
+  }
+}
+
+/* 2) DRAWER: when menu is open, top bar must NOT be visible */
+body.drawer-open .nav{
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(-120%) !important;
+}
+
+
+
+/* keep your existing smaller breakpoints working nicely */
+@media (max-width: 520px){
+  .slider{
+    scroll-padding-left: 14px !important;
+    scroll-padding-right: 14px !important;
+  }
+}
+
+  /* =========================
+   SLIDERS: 1 card per view + swipe + dots
+   (Trades = phone only, Reviews = phone + desktop)
+========================= */
+
+/* Base slider behavior */
+.slider{
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  touch-action: pan-y;              /* or: manipulation */
+  overscroll-behavior-x: contain;             /* keep horizontal swipe contained */
+  overflow-y: hidden !important;
+}
+.slider::-webkit-scrollbar{ display:none; }
+
+/* ---- TRADES (PHONE): 1 card per view ---- */
+@media (max-width: 720px){
+  #tradesSlider{
+    padding: 10px 18px 14px;            /* space so corners are visible */
+    scroll-padding-left: 18px;
+    scroll-padding-right: 18px;
+    gap: 14px;
+  }
+
+  #tradesSlider .trade-slide{
+    flex: 0 0 calc(100% - 36px);        /* 1 card on screen */
+    width: calc(100% - 36px);
+    scroll-snap-align: start;
+  }
+
+  /* show dots on phone */
+  #tradesDots, #reviewsDots{ display:flex; }
+}
+
+/* ---- TRADES (DESKTOP): keep your current grid/wrap (no dots) ---- */
+@media (min-width: 900px){
+  #tradesDots{ display:none; }
+}
+
+/* ---- REVIEWS (PHONE + DESKTOP): 1 card per view ---- */
+#reviewsSlider{
+  /* make the “viewport” centered so the card position stays the same */
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 18px 18px 22px;
+  scroll-padding-left: 18px;
+  scroll-padding-right: 18px;
+  gap: 18px;
+}
+#reviewsSlider .review-slide{
+  flex: 0 0 100%;                       /* always 1 card */
+  width: 100%;
+  min-width: 0;                         /* override old min-width rules */
+  scroll-snap-align: start;
+}
+
+/* Dots should be visible for reviews on desktop too */
+#reviewsDots{ display:flex; }
+
+/* Optional: nicer drag cursor on desktop */
+@media (min-width: 900px){
+  #reviewsSlider{ cursor: grab; }
+  #reviewsSlider.dragging{ cursor: grabbing; user-select:none; }
+}
+
+  /* =========================
+   PHONE: stable 1-card viewport (NO shifting on dot click)
+========================= */
+@media (max-width: 720px){
+
+  /* SLIDER viewport padding so corners are visible */
+  #tradesSlider,
+  #reviewsSlider{
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    scroll-padding-left: 16px !important;
+    scroll-padding-right: 16px !important;
+    gap: 14px !important;
+  }
+
+  /* 1 card takes ALL possible space (minus the viewport padding) */
+  #tradesSlider .trade-slide,
+  #reviewsSlider .review-slide{
+    flex: 0 0 calc(100% - 32px) !important;
+    width: calc(100% - 32px) !important;
+    scroll-snap-align: start !important; /* IMPORTANT: was center -> causes shifting */
+    scroll-snap-stop: always;
+  }
+
+  /* make sure slider is snapping correctly */
+  #tradesSlider,
+  #reviewsSlider{
+    scroll-snap-type: x mandatory !important;
+  }
+}
+
+  /* =========================================
+   PHONE: centered & bigger cards (stable)
+========================================= */
+@media (max-width: 720px){
+
+  /* 1️⃣ Center the slider itself on the page */
+  #tradesSlider,
+  #reviewsSlider{
+    width: 100%;
+    max-width: 94vw;              /* 🔥 controls how BIG the card feels */
+    margin-left: auto;
+    margin-right: auto;
+
+    padding-left: 12px;           /* small safe padding */
+    padding-right: 12px;
+    scroll-padding-left: 12px;
+    scroll-padding-right: 12px;
+
+    gap: 16px;
+  }
+
+  /* 2️⃣ Each card fills the centered viewport */
+  #tradesSlider .trade-slide,
+  #reviewsSlider .review-slide{
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100%;
+
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  /* 3️⃣ Make review cards visually BIGGER */
+  .review-slide{
+    min-height: 360px;            /* 🔥 taller = more premium */
+    border-radius: 30px;
+  }
+
+  /* 4️⃣ Center content inside review cards */
+  .review-inner{
+    align-items: center;
+  }
+}
+
+  /* =========================================
+   PHONE: BIGGER + ALWAYS CENTERED cards
+   (works for trades + reviews)
+========================================= */
+@media (max-width: 720px){
+
+  /* Choose how wide the card should be */
+  :root{
+    --cardW: 94vw;          /* make bigger/smaller (try 96vw, 92vw, etc.) */
+    --cardMax: 520px;       /* prevents too huge cards on big phones */
+  }
+
+  /* Slider becomes a centered viewport */
+  #tradesSlider,
+  #reviewsSlider{
+    width: 100% !important;
+
+    /* This is the trick: padding = (viewport - cardWidth)/2 */
+    padding-left: calc((100vw - min(var(--cardW), var(--cardMax))) / 2) !important;
+    padding-right: calc((100vw - min(var(--cardW), var(--cardMax))) / 2) !important;
+
+    scroll-padding-left: calc((100vw - min(var(--cardW), var(--cardMax))) / 2) !important;
+    scroll-padding-right: calc((100vw - min(var(--cardW), var(--cardMax))) / 2) !important;
+
+    gap: 14px !important;
+
+    scroll-snap-type: x mandatory !important;
+  }
+
+  /* Each card width is controlled and snaps to CENTER */
+  #tradesSlider .trade-slide,
+  #reviewsSlider .review-slide{
+    width: min(var(--cardW), var(--cardMax)) !important;
+    flex: 0 0 auto !important;
+
+    scroll-snap-align: center !important;
+    scroll-snap-stop: always;
+  }
+
+  /* Trades: keep height proportional automatically (image ratio already exists).
+     If you want the whole trade card to look taller, increase title padding: */
+  .trade-title{
+    padding: 16px 16px 18px !important;
+    font-size: 16px !important;
+  }
+
+  /* Reviews: DON'T force fixed height; let it scale naturally with content.
+     Just make it feel more premium: */
+  .review-slide{
+    border-radius: 30px !important;
+  }
+  .review-inner{
+    padding: 22px !important;
+  }
+}
+
+
+@media (max-width: 720px){
+  .slider{
+    overflow-y: hidden !important;
+    touch-action: auto !important;     /* ✅ allow browser to decide */
+  }
+
+  /* Optional: stops image ghost-drag, but keeps taps possible */
+  .slider img{
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+}
+
+
+/* ===== TRADES SECTION SPACING ===== */
+#trades h2{
+  margin-top: 44px;      /* space from top of surface */
+  margin-bottom: 38px;   /* space before slider */
+}
+
+
+  /* Make drawer feel shorter on top + more room at bottom */
+.drawer{
+  /* more space so language buttons never sit under FAB area */
+  padding-bottom: calc(max(18px, env(safe-area-inset-bottom)) + 120px);
+
+  /* stop scroll chaining (prevents “scroll behind” on many browsers) */
+  overscroll-behavior: contain;
+}
+
+/* Smaller header area where logo is */
+.drawer-top{
+  padding-top: 2px;
+  padding-bottom: 8px;
+  margin-bottom: 4px;
+}
+
+/* If your logo inside drawer is an <img>, make it smaller */
+.drawer-top img{
+  height: 110px;
+  width: auto;
+  display: block;
+}
+
 
 </style>
 
@@ -1238,7 +1632,7 @@ footer{
   <!-- ===== Top Nav ===== -->
   <header class="nav">
     <div class="nav-inner">
-<a class="logo" href="#top" data-nav aria-label="Home">
+<a class="logo" href="#hero" data-nav aria-label="Home">
   <img src="../assets/logo.png" alt="Logo" class="logo-img">
 </a>
 
@@ -1283,7 +1677,7 @@ footer{
   <div class="drawer-overlay" id="drawerOverlay" aria-hidden="true"></div>
   <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Menu">
     <div class="drawer-top">
-<a class="logo" href="#top" data-nav>
+<a class="logo" href="#hero" data-nav>
   <img src="../assets/logo.png" alt="Logo" class="logo-img">
 </a>
       <button class="drawer-close" id="drawerClose" aria-label="Close menu">×</button>
@@ -1314,116 +1708,246 @@ footer{
   <main id="top" class="wrap">
 
     <!-- 1.1 HERO -->
-<!-- 1.1 HERO (UPDATED) -->
 <section id="hero" aria-label="Hero">
   <div class="surface hero">
+
     <div class="hero-top">
-      <div class="kicker reveal-side from-left">CSCS • IPAF • NVQ</div>
-      <div class="hero-badges reveal-side from-right" aria-label="Key benefits">
+
+            <div class="hero-badges reveal-side from-right" aria-label="Key benefits">
         <span class="hero-badge">Без навчання</span>
         <span class="hero-badge">Офіційно</span>
-        <span class="hero-badge">Швидко</span>
+        <span class="hero-badge">Просто</span>
       </div>
     </div>
 
+    <!-- TITLE -->
     <h1 class="hero-title reveal-title">
-      Отримай <span class="outline">CSCS</span> &amp; <span class="outline">IPAF</span>
+      Сертифікати <span class="outline">CSCS</span>, <span class="outline">NVQ</span>, <span class="outline">IPAF</span>
       <br class="hero-br"/>
-      Card <span class="accent">швидко</span> та <span class="accent">легко</span>.
+      <span class="accent">швидко</span> та <span class="accent">легко</span>
     </h1>
 
+    <!-- SUBTITLE -->
     <p class="hero-lead reveal-side from-left">
-      Офіційна оцінка вашого реального досвіду в будівництві.
-      <span class="hero-muted">Drylining, Carpentry, Painting, Cladding, Fire Stopping, Supervision та інші.</span>
+      Ми підтверджуємо ваш реальний будівельний досвід
+      і супроводжуємо отримання сертифікатів
+      <strong>без навчання</strong> та <strong>без відриву від роботи</strong>.
     </p>
 
-    <div class="hero-points reveal-side from-right" role="list">
-      <div class="hero-point" role="listitem">
-        <span class="dot" aria-hidden="true"></span>
-        <span>Якщо ви вже працюєте — ви можете отримати <strong>NVQ</strong></span>
-      </div>
-      <div class="hero-point" role="listitem">
-        <span class="dot" aria-hidden="true"></span>
-        <span>Підтверджуємо те, що ви вже вмієте — без “навчання”</span>
-      </div>
-      <div class="hero-point" role="listitem">
-        <span class="dot" aria-hidden="true"></span>
-        <span>Підкажемо, які докази потрібні та як швидко пройти процес</span>
-      </div>
-    </div>
-
+    <!-- STEPS -->
     <div class="hero-steps reveal-side from-bottom">
       <span>Безкоштовна перевірка</span>
-      <span class="sep" aria-hidden="true">→</span>
-      <span>План</span>
-      <span class="sep" aria-hidden="true">→</span>
+      <span class="sep">→</span>
+      <span>Чіткий план</span>
+      <span class="sep">→</span>
       <span>Асесмент</span>
-      <span class="sep" aria-hidden="true">→</span>
-      <span>NVQ</span>
-      <span class="sep" aria-hidden="true">→</span>
+      <span class="sep">→</span>
       <span>CSCS Card</span>
     </div>
 
+    <!-- CTA NOTE -->
     <div class="hero-note reveal-side from-left">
       <span class="pulse" aria-hidden="true"></span>
-      Напишіть у WhatsApp — відповімо швидко та підберемо правильний рівень NVQ.
+      Напишіть у WhatsApp для безкоштовної консультації
     </div>
+
   </div>
 </section>
 
 
-    <!-- 1.15 ABOUT US -->
+
+    <!-- 1.15 ABOUT US (UPDATED + ACCORDION) -->
 <section id="about" aria-label="About us">
-    <div class="surface card dissolve-card glow-soft">
+  <div class="surface card dissolve-card glow-soft">
     <h2 class="reveal-title">ПРО НАС</h2>
 
     <p class="lead reveal-side from-left">
-      Ми допомагаємо будівельникам у Великобританії отримати <strong>NVQ</strong> та <strong>CSCS</strong> —
-      <strong>швидко, офіційно</strong> і <strong>без відриву від роботи</strong>.
-      Якщо ви вже працюєте на сайті — ми допоможемо підтвердити ваш реальний досвід за стандартами UK.
+      Ми допомагаємо людям, які хочуть працювати на будівельних об’єктах
+      у Великій Британії, офіційно отримати всі необхідні сертифікати і
+      карти для легальної роботи згідно вимог будівельної системи UK.
     </p>
 
-    <div class="kicker reveal-side from-right" style="margin-top:12px;">Ми спеціалізуємося в:</div>
-    <ul class="bullets">
-      <li class="reveal-side from-left">NVQ Level 2 / 3 / 6</li>
-      <li class="reveal-side from-right">Blue / Gold / Black CSCS cards</li>
-      <li class="reveal-side from-left">Trades та Site Management</li>
-      <li class="reveal-side from-right">Підтримка IPAF (MEWP)</li>
-      <li class="reveal-side from-left">Клієнти: UA / RU / EN</li>
-    </ul>
+    <div class="kicker reveal-side from-right" style="margin-top:12px;">Наші напрямки</div>
 
-    <div class="kicker reveal-side from-left" style="margin-top:14px;">Наша місія</div>
-    <p class="sublead reveal-side from-right">
-      Допомогти будівельникам працювати легально, заробляти більше і рухатися вперед.
-    </p>
+    <!-- Accordion (same as “Процес”) -->
+    <div class="accordion" id="aboutAccordion" style="margin-top:10px;">
+
+      <!-- Green CSCS -->
+      <div class="acc-item reveal-side from-left">
+        <button class="acc-btn" type="button" aria-expanded="false">
+          <span>Green CSCS Card (зелена карта)</span>
+          <span class="chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-panel">
+          <p>
+            ● Допомога для людей, які не говорять англійською мовою<br/>
+            ● Підтримка при складнощах зі здачею Health &amp; Safety Test<br/>
+            ● Пояснюємо весь процес і супроводжуємо крок за кроком, щоб отримати карту легко та без стресу
+          </p>
+        </div>
+      </div>
+
+      <!-- NVQ -->
+      <div class="acc-item reveal-side from-right">
+        <button class="acc-btn" type="button" aria-expanded="false">
+          <span>NVQ Certificates</span>
+          <span class="chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-panel">
+          <p>
+            ● Level 1, Level 2, Level 3 та Level 6<br/>
+            ● Для робітничих спеціальностей і Site Management<br/>
+            ● Офіційний процес без відриву від роботи
+          </p>
+        </div>
+      </div>
+
+      <!-- IPAF -->
+      <div class="acc-item reveal-side from-left">
+        <button class="acc-btn" type="button" aria-expanded="false">
+          <span>IPAF (MEWP) сертифікація</span>
+          <span class="chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-panel">
+          <p>
+            ● Підтримка в отриманні категорій 3A, 3B<br/>
+            ● Також допомога з іншими доступними категоріями IPAF
+          </p>
+        </div>
+      </div>
+
+      <!-- Plant machinery cards -->
+      <div class="acc-item reveal-side from-right">
+        <button class="acc-btn" type="button" aria-expanded="false">
+          <span>Сертифікація для роботи на будівельній техніці у Великій Британії</span>
+          <span class="chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-panel">
+          <p>
+            ● Допомагаємо отримати офіційні сертифікаційні карти для роботи та керування будівельною технікою<br/>
+            ● Працюємо з британськими форматами карт операторів техніки (типу CPCS / NPORS та аналогічні)<br/>
+            ● Пояснюємо, яка саме карта потрібна у вашому випадку, та супроводжуємо весь процес отримання
+          </p>
+        </div>
+      </div>
+
+      <!-- PASMA -->
+      <div class="acc-item reveal-side from-left">
+        <button class="acc-btn" type="button" aria-expanded="false">
+          <span>PASMA сертифікат</span>
+          <span class="chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-panel">
+          <p>
+            ● Для роботи з вежами та мобільними доступними платформами
+          </p>
+        </div>
+      </div>
+
+      <!-- Extra mandatory certs -->
+      <div class="acc-item reveal-side from-right">
+        <button class="acc-btn" type="button" aria-expanded="false">
+          <span>Додаткові обовʼязкові сертифікати для роботи на сайті</span>
+          <span class="chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-panel">
+          <p>
+            ● First Aid<br/>
+            ● SSSTS<br/>
+            ● SMSTS<br/>
+            ● Інші необхідні курси та сертифікації відповідно до вимог обʼєкта
+          </p>
+        </div>
+      </div>
+
+      <!-- Language support -->
+      <div class="acc-item reveal-side from-left">
+        <button class="acc-btn" type="button" aria-expanded="false">
+          <span>Мовна підтримка</span>
+          <span class="chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-panel">
+          <p>
+            ● Працюємо з кандидатами, які говорять українською, російською та англійською мовам<br/>
+            ● Пояснюємо всі етапи просто, чітко та зрозуміло
+          </p>
+        </div>
+      </div>
+
+    </div>
+
   </div>
 </section>
 
+
     <!-- 1.2 NVQ -->
-    <section id="nvq" aria-label="NVQ">
-      <div class="surface card dissolve-card glow-strong">
-        <h2 class="reveal-title">ЩО ТАКЕ NVQ?</h2>
+<section id="nvq" aria-label="NVQ">
+  <div class="surface card dissolve-card glow-strong">
 
-        <p class="lead reveal-side from-left">
-          NVQ — це офіційна кваліфікація у Великобританії, яка підтверджує, що ви реально вмієте виконувати
-          свою роботу за британськими стандартами.
-        </p>
+    <h2 class="reveal-title">ЩО ТАКЕ NVQ?</h2>
 
-        <div class="kicker reveal-side from-right" style="margin-top:12px;">NVQ потрібен для:</div>
+    <p class="lead reveal-side from-left">
+      NVQ — це офіційна кваліфікація у Великобританії, яка підтверджує,
+      що ви <strong>реально вмієте виконувати свою роботу</strong> за британськими
+      стандартами.
+    </p>
 
-        <ul class="bullets">
-          <li class="reveal-side from-left">підтвердити кваліфікацію працівника за стандартами Великобританії</li>
-          <li class="reveal-side from-right">допустити людину до роботи на великих та регульованих сайтах</li>
-          <li class="reveal-side from-left">отримати CSCS Blue, Gold або Black Card</li>
-          <li class="reveal-side from-right">відповідати вимогам головних підрядників</li>
-          <li class="reveal-side from-left">працювати на проєктах з високими вимогами до безпеки</li>
-          <li class="reveal-side from-right">підвищити карєрну позицію до Supervisor або Manager</li>
-          <li class="reveal-side from-left">отримати доступ до стабільних контрактів</li>
-          <li class="reveal-side from-right">підвищити зарплату</li>
-          <li class="reveal-side from-left">будувати довгострокову кар’єру в будівельній індустрії UK</li>
-        </ul>
-      </div>
-    </section>
+    <div class="kicker reveal-side from-right" style="margin-top:14px;">
+      Навіщо потрібен NVQ
+    </div>
+
+    <ul class="bullets">
+      <li class="reveal-side from-left">
+        Підтверджує професійний рівень на основі реального робочого досвіду
+      </li>
+
+      <li class="reveal-side from-right">
+        Є обовʼязковою вимогою для отримання CSCS карт
+        <strong>Blue, Gold та Black</strong>
+      </li>
+
+      <li class="reveal-side from-left">
+        Забезпечує карʼєрний шлях від <strong>operative</strong> до
+        керівних посад (Supervisor / Manager)
+      </li>
+
+      <li class="reveal-side from-right">
+        Дає доступ до великих construction sites по всій UK з
+        <strong>передбачуваною оплатою</strong> та стабільною зайнятістю
+      </li>
+    </ul>
+
+  </div>
+</section>
+
 
     <!-- 1.3 PROCESS (Accordion multi-open) -->
     <section id="process" aria-label="Process">
@@ -1440,7 +1964,9 @@ footer{
                 </svg>
               </span>
             </button>
-            <div class="acc-panel"><p>Визначаємо ваш трейд, досвід, потрібну карту і рівень NVQ. Даємо план, що і як підготувати.</p></div>
+            <div class="acc-panel"><p>Визначаємо вашу спеціальність, реальний досвід роботи, потрібний тип CSCS карти та
+відповідний рівень NVQ. Аналізуємо, що у вас вже є, чого не вистачає, і складаємо
+чіткий покроковий та зрозумілий план дій до результату, без відриву від роботи.</p></div>
           </div>
 
           <div class="acc-item reveal-side from-right">
@@ -1452,7 +1978,8 @@ footer{
                 </svg>
               </span>
             </button>
-            <div class="acc-panel"><p>Реєструємо вас, створюємо структуру портфоліо і запускаємо процес.</p></div>
+            <div class="acc-panel"><p>Реєструємо вас у системі, створюємо правильну структуру NVQ портфоліо та офіційно
+запускаємо процес оцінювання.</p></div>
           </div>
 
           <div class="acc-item reveal-side from-left">
@@ -1464,7 +1991,9 @@ footer{
                 </svg>
               </span>
             </button>
-            <div class="acc-panel"><p>Погоджуємо, як ви надаєте докази: фото, відео, документи, розмова з асесором.</p></div>
+            <div class="acc-panel"><p>Ми пояснюємо весь формат асесменту, погоджуємо як саме будемо підтверджувати
+досвід. Разом визначаємо прооцес, (фото, відео, документи) Щоб ви чітко розуміли
+весь процес від початку до кінця.</p></div>
           </div>
 
           <div class="acc-item reveal-side from-right">
@@ -1476,7 +2005,9 @@ footer{
                 </svg>
               </span>
             </button>
-            <div class="acc-panel"><p>Ви надсилаєте докази, асесор перевіряє, ставить питання і формує портфоліо.</p></div>
+            <div class="acc-panel"><p>В залежності від погодженого плану ви надаєте необхідні докази дистанційно або
+асесор відвідує вас на об’єкті для проведення оцінювання на місці. На основі цього
+формується офіційне NVQ портфоліо відповідно до вимог кваліфікації.</p></div>
           </div>
 
           <div class="acc-item reveal-side from-left">
@@ -1488,309 +2019,506 @@ footer{
                 </svg>
               </span>
             </button>
-            <div class="acc-panel"><p>Паралельно ви готуєтесь і здаєте обов’язковий Health &amp; Safety тест.</p></div>
+            <div class="acc-panel"><p>Паралельно з асесментом ви готуєтесь і здаєте обов’язковий Health, Safety &
+Environment тест, який є другою необхідною вимогою для отримання CSCS карти.</p></div>
           </div>
 
           <div class="acc-item reveal-side from-right">
             <button class="acc-btn" type="button" aria-expanded="false">
-              <span>6) NVQ + CSCS</span>
+              <span>6) NVQ + HS&E Test → CSCS Card</span>
               <span class="chev" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
                   <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
               </span>
             </button>
-            <div class="acc-panel"><p>Після затвердження отримуєте NVQ і подаєтесь на CSCS карту.</p></div>
+            <div class="acc-panel"><p>Після успішного затвердження портфоліо ви отримуєте NVQ сертифікат відповідно до
+вашої кваліфікації та підтверджений результат Health & Safety тесту. На основі цих двох
+документів ви подаєте заявку на отримання CSCS карти.</p></div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- 1.4 TRADES Slider -->
-    <section id="trades" aria-label="Trades">
-      <div class="surface">
+<section id="trades" aria-label="Trades">
+  <div class="surface">
 
-        <h2 class="reveal-title">НАШІ СПЕЦІАЛЬНОСТІ</h2>
+    <h2 class="reveal-title">НАШІ СПЕЦІАЛЬНОСТІ</h2>
 
-        <div class="slider" id="tradesSlider" aria-label="Trades slider">
-          <div class="trade-slide reveal-side from-bottom">
-            <div class="trade-img"><img src="../assets/green.png" alt="Green CSCS Cards"></div>
-            <div class="trade-title">Green CSCS Cards</div>
-          </div>
+    <div class="slider" id="tradesSlider" aria-label="Trades slider">
 
-          <div class="trade-slide reveal-side from-bottom">            <div class="trade-img"><img src="../assets/blue.jpeg" alt="All Trades NVQ Level 2 Blue"></div>
-            <div class="trade-title">All Trades NVQ Level 2 Blue</div>
-          </div>
-
-          <div class="trade-slide reveal-side from-bottom">
-            <div class="trade-img"><img src="../assets/gold.png" alt="Supervy NVQ Level 3 Gold"></div>
-            <div class="trade-title">Supervy NVQ Level 3 Gold</div>
-          </div>
-
-          <div class="trade-slide reveal-side from-bottom">
-            <div class="trade-img"><img src="../assets/black.png" alt="Manager NVQ Level 6 Black"></div>
-            <div class="trade-title">Manager NVQ Level 6 Black</div>
-          </div>
-
-          <div class="trade-slide reveal-side from-bottom">
-            <div class="trade-img"><img src="../assets/pasma.png" alt="IPAF & PASMA"></div>
-            <div class="trade-title">IPAF &amp; PASMA</div>
-          </div>
+      <!-- Green -->
+      <div class="trade-slide reveal-side from-bottom">
+        <div class="trade-img">
+          <img src="../assets/green_card.webp" alt="CSCS Green Card Labourer NVQ Level 1">
         </div>
-
-        <div class="dots" id="tradesDots" aria-hidden="true"></div>
+        <div class="trade-title">
+          CSCS Green Card<br>
+          <span>Labourer — NVQ Level 1</span>
+        </div>
       </div>
-    </section>
+
+      <!-- Blue -->
+      <div class="trade-slide reveal-side from-bottom">
+        <div class="trade-img">
+          <img src="../assets/blue_card.webp" alt="CSCS Blue Card Skilled Worker NVQ Level 2">
+        </div>
+        <div class="trade-title">
+          CSCS Blue Card<br>
+          <span>Skilled Worker — NVQ Level 2</span>
+        </div>
+      </div>
+
+      <!-- Gold -->
+      <div class="trade-slide reveal-side from-bottom">
+        <div class="trade-img">
+          <img src="../assets/gold_card.webp" alt="CSCS Gold Card Supervisor NVQ Level 3">
+        </div>
+        <div class="trade-title">
+          CSCS Gold Card<br>
+          <span>Supervisor — NVQ Level 3</span>
+        </div>
+      </div>
+
+      <!-- Black -->
+      <div class="trade-slide reveal-side from-bottom">
+        <div class="trade-img">
+          <img src="../assets/black_card.webp" alt="CSCS Black Card Manager NVQ Level 6">
+        </div>
+        <div class="trade-title">
+          CSCS Black Card<br>
+          <span>Manager — NVQ Level 6</span>
+        </div>
+      </div>
+
+      <!-- NPORS -->
+      <div class="trade-slide reveal-side from-bottom">
+        <div class="trade-img">
+          <img src="../assets/npors_card.webp" alt="NPORS Plant Operator Card">
+        </div>
+        <div class="trade-title">
+          NPORS Operator Card<br>
+          <span>Plant Machinery</span>
+        </div>
+      </div>
+
+      <!-- IPAF -->
+      <div class="trade-slide reveal-side from-bottom">
+        <div class="trade-img">
+          <img src="../assets/ipaf_card.webp" alt="IPAF Powered Access Licence 3A 3B">
+        </div>
+        <div class="trade-title">
+          IPAF Licence<br>
+          <span>Powered Access (3A / 3B)</span>
+        </div>
+      </div>
+
+      <!-- PASMA -->
+      <div class="trade-slide reveal-side from-bottom">
+        <div class="trade-img">
+          <img src="../assets/pasma_card.webp" alt="PASMA Tower Card">
+        </div>
+        <div class="trade-title">
+          PASMA Card<br>
+          <span>Mobile Towers &amp; Low-Level Access</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="dots" id="tradesDots" aria-hidden="true"></div>
+  </div>
+</section>
+
 
     <!-- 1.5 PRICING -->
-    <section id="pricing" aria-label="Pricing">
-      <div class="surface card dissolve-card glow-strong">
-        <h2 class="reveal-title">ПРОЗОРІ ЦІНИ, БЕЗ ПРИХОВАНИХ ПЛАТЕЖІВ</h2>
+<section id="pricing" aria-label="Pricing">
+  <div class="surface card dissolve-card glow-strong">
+    <h2 class="reveal-title">Скільки це коштує</h2>
 
-        <div class="price-grid">
-          <div class="price reveal-side from-left">
-            <p class="name">NVQ Level 1</p>
-            <p class="value">350£</p>
-          </div>
-          <div class="price reveal-side from-right">
-            <p class="name">NVQ Level 2</p>
-            <p class="value">500–750£</p>
-          </div>
-          <div class="price reveal-side from-left">
-            <p class="name">NVQ Level 3</p>
-            <p class="value">850–1000£</p>
-          </div>
-          <div class="price reveal-side from-right">
-            <p class="name">NVQ Level 6</p>
-            <p class="value">1500–1900£</p>
-          </div>
-        </div>
+    <p class="lead reveal-side from-left" style="margin-top:10px;">
+      Прозорі ціни — без прихованих платежів
+    </p>
 
-        <p class="lead reveal-side from-left" style="margin-top:14px;">
-          Остаточну суму ми обговоримо після безкоштовної перевірки. Ціна залежить від спеціальності та кількості доказів. 
-        </p>
+    <div class="price-grid">
+      <div class="price reveal-side from-left">
+        <p class="name">NVQ Level 1</p>
+        <p class="value">£350</p>
       </div>
-    </section>
+
+      <div class="price reveal-side from-right">
+        <p class="name">NVQ Level 2</p>
+        <p class="value">£500–£750</p>
+      </div>
+
+      <div class="price reveal-side from-left">
+        <p class="name">NVQ Level 3</p>
+        <p class="value">£850–£1,000</p>
+      </div>
+
+      <div class="price reveal-side from-right">
+        <p class="name">NVQ Level 6</p>
+        <p class="value">£1,500–£1,900</p>
+      </div>
+
+      <div class="price reveal-side from-left">
+        <p class="name">IPAF / PASMA</p>
+        <p class="value">£200–£350</p>
+      </div>
+    </div>
+
+    <p class="lead reveal-side from-left" style="margin-top:14px;">
+      Ціна залежить від спеціальності, рівня та кількості доказів.<br>
+      Перед початком ми проводимо безкоштовну перевірку ваших доказів і після цього називаємо точну фінальну вартість.
+    </p>
+  </div>
+</section>
+
 
     <!-- 1.6 WHY US -->
-    <section id="why" aria-label="Why us">
-      <div class="surface">
-        <h2 class="reveal-title">ЧОМУ ОБИРАЮТЬ НАС?</h2>
+<!-- WHY US (ACCORDION VERSION) -->
+<section id="why" aria-label="Why us">
+  <div class="surface card dissolve-card glow-soft">
 
-        <div class="why">
-          <div class="item reveal-side from-left">Робимо все для того щоб процес був максимально простий для кандидата</div>
-          <div class="item reveal-side from-right">Говоримо з вами на вашій мові, Українською, Російською, Англійською</div>
-          <div class="item reveal-side from-left">Наші асесори мають CAVA та будівельний досвід</div>
-          <div class="item reveal-side from-right">Ми працюємо тільки з офіційними awarding bodies, які приймають всі сайти UK</div>
-          <div class="item reveal-side from-left">Ми знаємо, як реально проходить процес отримання NVQ</div>
-          <div class="item reveal-side from-right">Працюємо з робітниками з України, ЄС та UK</div>
+    <h2 class="reveal-title">ЧОМУ ОБИРАЮТЬ НАС?</h2>
+
+    <div class="accordion" style="margin-top:12px;">
+
+      <!-- Item 1 -->
+      <div class="acc-item reveal-side from-left">
+        <button class="acc-btn" type="button" aria-expanded="false">
+          <span>Офіційний NVQ, який визнається по всій UK</span>
+          <span class="chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.85)" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-panel">
+          <p>
+            Ви отримуєте перевірений NVQ сертифікат, який приймається
+            на всіх будівельних обʼєктах Великобританії та підходить
+            для оформлення CSCS карти.
+          </p>
         </div>
       </div>
-    </section>
+
+      <!-- Item 2 -->
+      <div class="acc-item reveal-side from-right">
+        <button class="acc-btn" type="button" aria-expanded="false">
+          <span>Реальні асесори з будівельним досвідом</span>
+          <span class="chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.85)" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-panel">
+          <p>
+            Наші асесори мають практичний досвід роботи на UK-сайтах
+            і добре розуміють реальні вимоги будівельної галузі.
+          </p>
+        </div>
+      </div>
+
+      <!-- Item 3 -->
+      <div class="acc-item reveal-side from-left">
+        <button class="acc-btn" type="button" aria-expanded="false">
+          <span>Максимально простий процес для кандидата</span>
+          <span class="chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.85)" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-panel">
+          <p>
+            Ми беремо на себе організацію, документи та весь супровід,
+            щоб вам не довелося розбиратися в деталях і бюрократії.
+          </p>
+        </div>
+      </div>
+
+      <!-- Item 4 -->
+      <div class="acc-item reveal-side from-right">
+        <button class="acc-btn" type="button" aria-expanded="false">
+          <span>Покроковий супровід від старту до сертифіката</span>
+          <span class="chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.85)" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-panel">
+          <p>
+            Ви отримуєте чіткий шлях: від реєстрації до NVQ та CSCS —
+            без незрозумілостей, здогадок і ризиків.
+          </p>
+        </div>
+      </div>
+
+      <!-- Item 5 -->
+      <div class="acc-item reveal-side from-left">
+        <button class="acc-btn" type="button" aria-expanded="false">
+          <span>Спілкуємось вашою мовою</span>
+          <span class="chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.85)" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-panel">
+          <p>
+            Українська, російська або англійська —
+            щоб увесь процес був зрозумілий, спокійний і комфортний.
+          </p>
+        </div>
+      </div>
+
+      <!-- Item 6 -->
+      <div class="acc-item reveal-side from-right">
+        <button class="acc-btn" type="button" aria-expanded="false">
+          <span>Чесні терміни та зрозумілий результат</span>
+          <span class="chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.85)" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-panel">
+          <p>
+            Ви чітко знаєте, що, коли і який результат отримаєте —
+            без прихованих умов і неприємних сюрпризів.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
 
     <!-- REVIEWS (ALL PEOPLE) -->
     <section id="reviews" aria-label="Reviews">
-      <div class="surface">
-        <h2 class="reveal-title">ВІДГУКИ</h2>
-<p class="lead reveal-side from-left">
-  Реальні відгуки від людей, які вже отримали NVQ та CSCS.
-</p>
+  <div class="surface">
+    <h2 class="reveal-title">ВІДГУКИ</h2>
+    <p class="lead reveal-side from-left">
+      Реальні відгуки від людей, які вже отримали NVQ та CSCS.
+    </p>
 
+    <div class="slider" id="reviewsSlider" aria-label="Reviews slider">
 
-        <div class="slider" id="reviewsSlider" aria-label="Reviews slider">
-
-          <!-- 1 -->
-          <article class="review-slide glow-edge reveal-side from-bottom">
-            <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
-              <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
-            </svg>
-            <div class="review-inner">
-              <div class="review-photo"><img src="../assets/Ivan Khorob.png" alt="Ivan Khorob"></div>
-              <div>
-                <div class="review-name">Ivan Khorob</div>
-                <div class="review-role">NVQ Level 2 Cladding</div>
-                <p class="review-text">“Getting my NVQ Level 2 in Cladding was much easier than I expected. The assessor guided me step by step and explained exactly what evidence I needed. I didn’t have to stop working or go to college. Everything was done through photos, videos and site documents. Now I can apply for better jobs and higher rates. I finally have proof of my real experience.”</p>
-              </div>
-            </div>
-          </article>
-
-          <!-- 2 -->
-          <article class="review-slide reveal-side from-bottom">
-            <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
-              <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
-            </svg>
-            <div class="review-inner">
-              <div class="review-photo"><img src="../assets/Volodymyr Zyhanchyn.png" alt="Volodymyr Zyhanchyn"></div>
-              <div>
-                <div class="review-name">Volodymyr Zyhanchyn</div>
-                <div class="review-role">NVQ Level 2 Cladding</div>
-                <p class="review-text">“I had years of cladding experience but no official qualification before. This process helped me turn my real work into a recognised NVQ. The support was very clear and professional.
-The assessor understood how construction sites really work. I now have a proper Level 2 certificate and can move forward with my career. It was worth every step.”</p>
-              </div>
-            </div>
-          </article>
-
-          <!-- 3 -->
-          <article class="review-slide reveal-side from-bottom">
-            <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
-              <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
-            </svg>
-            <div class="review-inner">
-              <div class="review-photo"><img src="../assets/Artur Varadi.png" alt="Artur Varadi"></div>
-              <div>
-                <div class="review-name">Artur Varadi</div>
-                <div class="review-role">NVQ Level 2 Drylining</div>
-                <p class="review-text">“The NVQ process was very well organised from start to finish. I was able to send my site photos and videos without any problems. The assessor checked everything carefully and gave me clear feedback. I didn’t need to take time off work. Now I have my NVQ Level 2 and
-I can get my Blue CSCS card. This helped me get better site access.”</p>
-              </div>
-            </div>
-          </article>
-
-          <!-- 4 -->
-          <article class="review-slide reveal-side from-bottom">
-            <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
-              <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
-            </svg>
-            <div class="review-inner">
-              <div class="review-photo"><img src="../assets/Batyrzhan Abdullayev.png" alt="Batyrzhan Abdullayev"></div>
-              <div>
-                <div class="review-name">Batyrzhan Abdullayev</div>
-                <div class="review-role">NVQ Level 2 Drylining</div>
-                <p class="review-text">“I was worried it would be complicated, but it was actually very straightforward. The assessor explained what evidence I needed and helped me prepare it correctly. Everything was based on my real work on site. I didn’t have to do any exams or classes. Now I have my NVQ Level 2 and feel more confident working in the UK. It was a great experience.”</p>
-              </div>
-            </div>
-          </article>
-
-          <!-- 5 -->
-          <article class="review-slide reveal-side from-bottom">
-            <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
-              <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
-            </svg>
-            <div class="review-inner">
-              <div class="review-photo"><img src="../assets/Ivan Rozmetaniuk.png" alt="Ivan Rozmetaniuk"></div>
-              <div>
-                <div class="review-name">Ivan Rozmetaniuk</div>
-                <div class="review-role">NVQ Level 2 Drylining</div>
-                <p class="review-text">“This NVQ helped me officially confirm my drylining skills. The assessor was very professional and easy to communicate with. I could complete the process while still working on site. All my experience was recognised properly. Now I can apply for Blue CSCS and better contracts. I would definitely recommend this service.”</p>
-              </div>
-            </div>
-          </article>
-
-          <!-- 6 -->
-          <article class="review-slide reveal-side from-bottom">
-            <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
-              <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
-            </svg>
-            <div class="review-inner">
-              <div class="review-photo"><img src="../assets/Roman Taistra.png" alt="Roman Taistra"></div>
-              <div>
-                <div class="review-name">Roman Taistra</div>
-                <div class="review-role">NVQ Level 2 Drylining</div>
-                <p class="review-text">“I already had many years of experience, but no UK qualification. This NVQ process allowed me to prove my skills quickly. The evidence system was simple and clear. I received good support at every stage. Now I have a Level 2 NVQ and more job opportunities. It made a big difference for my career.”</p>
-              </div>
-            </div>
-          </article>
-
-          <!-- 7 -->
-          <article class="review-slide reveal-side from-bottom">
-            <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
-              <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
-            </svg>
-            <div class="review-inner">
-              <div class="review-photo"><img src="../assets/Yevhenii Dorozhko.png" alt="Yevhenii Dorozhko"></div>
-              <div>
-                <div class="review-name">Yevhenii Dorozhko</div>
-                <div class="review-role">NVQ Level 2 Drylining</div>
-                <p class="review-text">“The NVQ assessment was well structured and professional. I sent my work photos and videos, and everything was reviewed properly. I did not have to go to any classes. The whole process was stress-free. Now I have an official qualification in the UK. It really helps when applying for new jobs.”</p>
-              </div>
-            </div>
-          </article>
-
-          <!-- 8 -->
-          <article class="review-slide reveal-side from-bottom">
-            <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
-              <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
-            </svg>
-            <div class="review-inner">
-              <div class="review-photo"><img src="../assets/Dusan Vojnovic.png" alt="Dusan Vojnovic"></div>
-              <div>
-                <div class="review-name">Dusan Vojnovic</div>
-                <div class="review-role">NVQ Level 3 Site Supervision</div>
-                <p class="review-text">“The Level 3 NVQ helped me prove my supervisor experience. The assessor understood my role and asked the right questions. All my site management work was correctly assessed. I didn’t need to leave my job to complete it. Now I have a recognised UK qualification. This opens the door to higher positions.”</p>
-              </div>
-            </div>
-          </article>
-
-          <!-- 9 -->
-          <article class="review-slide reveal-side from-bottom">
-            <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
-              <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
-            </svg>
-            <div class="review-inner">
-              <div class="review-photo"><img src="../assets/Oleksandr Shania.png" alt="Oleksandr Shania"></div>
-              <div>
-                <div class="review-name">Oleksandr Shania</div>
-                <div class="review-role">NVQ Level 3 Site Supervision</div>
-                <p class="review-text">“The NVQ Level 3 was a big step forward for my career. The process was professional and very well organised. I could show my real management experience through evidence and discussions. The assessor supported me through the whole assessment. Now I am fully qualified as a site supervisor in the UK. It gives me more confidence and better job options.”</p>
-              </div>
-            </div>
-          </article>
-
-          <!-- 10 -->
-          <article class="review-slide reveal-side from-bottom">
-            <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
-              <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
-            </svg>
-            <div class="review-inner">
-              <div class="review-photo"><img src="../assets/Sreten Trbojevic.png" alt="Sreten Trbojevic"></div>
-              <div>
-                <div class="review-name">Sreten Trbojevic</div>
-                <div class="review-role">NVQ Level 2 Painting &amp; Decorating</div>
-                <p class="review-text">“I finally have an official NVQ in Painting and Decorating. The assessment was based on my real work, not on theory. The assessor was very helpful and easy to deal with. I completed everything while working on site. Now I can apply for better paid jobs. This qualification really makes a difference.”</p>
-              </div>
-            </div>
-          </article>
-
-          <!-- 11 -->
-          <article class="review-slide reveal-side from-bottom">
-            <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
-              <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
-            </svg>
-            <div class="review-inner">
-              <div class="review-photo"><img src="../assets/Roman Nyshchuk.png" alt="Roman Nyshchuk"></div>
-              <div>
-                <div class="review-name">Roman Nyshchuk</div>
-                <div class="review-role">NVQ Level 2 Drylining</div>
-                <p class="review-text">“The NVQ process was simple and very professional. I was able to use my real site work as evidence, which made everything much easier. The assessor guided me through every step and explained what was needed. I didn’t have to stop working or attend any classes. Now I have my NVQ Level 2 and can apply for my Blue CSCS card. It really helped me move forward in my career.”</p>
-              </div>
-            </div>
-          </article>
-
-          <!-- 12 -->
-          <article class="review-slide reveal-side from-bottom">
-            <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
-              <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
-            </svg>
-            <div class="review-inner">
-              <div class="review-photo"><img src="../assets/Vasyl Dzul.png" alt="Vasyl Dzul"></div>
-              <div>
-                <div class="review-name">Vasyl Dzul</div>
-                <div class="review-role">NVQ Level 2 Drylining</div>
-                <p class="review-text">“Getting my NVQ was a very smooth process. I just provided photos and videos from my daily work on site. The assessor reviewed everything carefully and supported me throughout. There were no exams or classroom learning. Now I have an official UK qualification. This gives me more opportunities and better job security.”</p>
-              </div>
-            </div>
-          </article>
-
+      <!-- 1 -->
+      <article class="review-slide glow-edge reveal-side from-bottom">
+        <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
+        </svg>
+        <div class="review-inner">
+          <div class="review-photo"><img src="../assets/Ivan Khorob.png" alt="Іван Хороб"></div>
+          <div>
+            <div class="review-name">ІВАН ХОРОБ</div>
+            <div class="review-role">NVQ Level 2 — Cladding (облицювання/фасади)</div>
+            <p class="review-text">“Отримати NVQ Level 2 по Cladding було значно простіше, ніж я очікував. Асесор крок за кроком пояснив, які саме докази потрібні. Мені не довелося зупиняти роботу чи ходити на навчання. Усе робилося через фото, відео та документи з об’єкта. Тепер я можу претендувати на кращі вакансії та вищу оплату. Нарешті маю офіційне підтвердження реального досвіду.”</p>
+          </div>
         </div>
+      </article>
 
-        <div class="dots" id="reviewsDots" aria-hidden="true"></div>
-      </div>
-    </section>
+      <!-- 2 -->
+      <article class="review-slide reveal-side from-bottom">
+        <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
+        </svg>
+        <div class="review-inner">
+          <div class="review-photo"><img src="../assets/Volodymyr Zyhanchyn.png" alt="Володимир Зиганчин"></div>
+          <div>
+            <div class="review-name">ВОЛОДИМИР ЗИГАНЧИН</div>
+            <div class="review-role">NVQ Level 2 — Cladding (облицювання/фасади)</div>
+            <p class="review-text">“У мене був багаторічний досвід у cladding, але без офіційної кваліфікації в UK. Цей процес допоміг перетворити мій реальний досвід на визнаний NVQ. Підтримка була дуже чіткою та професійною.
+Асесор розумів, як реально працюють будівельні об’єкти. Тепер у мене є Level 2 сертифікат і я можу рухатися далі в кар’єрі. Це було варте кожного кроку.”</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- 3 -->
+      <article class="review-slide reveal-side from-bottom">
+        <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
+        </svg>
+        <div class="review-inner">
+          <div class="review-photo"><img src="../assets/Artur Varadi.png" alt="Артур Вараді"></div>
+          <div>
+            <div class="review-name">АРТУР ВАРАДІ</div>
+            <div class="review-role">NVQ Level 2 — Drylining (гіпсокартон)</div>
+            <p class="review-text">“Процес NVQ був дуже добре організований від початку до кінця. Я без проблем надсилав фото та відео з об’єкта. Асесор уважно перевіряв усе та давав зрозумілий фідбек. Мені не потрібно було брати вихідні.
+Тепер у мене є NVQ Level 2 і я можу оформлювати Blue CSCS card. Це допомогло отримати кращий доступ до об’єктів.”</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- 4 -->
+      <article class="review-slide reveal-side from-bottom">
+        <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
+        </svg>
+        <div class="review-inner">
+          <div class="review-photo"><img src="../assets/Batyrzhan Abdullayev.png" alt="Батиржан Абдуллаєв"></div>
+          <div>
+            <div class="review-name">БАТИРЖАН АБДУЛЛАЄВ</div>
+            <div class="review-role">NVQ Level 2 — Drylining (гіпсокартон)</div>
+            <p class="review-text">“Я переживав, що буде складно, але насправді все було дуже просто. Асесор пояснив, які докази потрібні, і допоміг правильно підготувати їх. Усе базувалося на моїй реальній роботі на сайті. Жодних іспитів чи занять.
+Тепер у мене NVQ Level 2 і я почуваюся впевненіше, працюючи у Великій Британії. Дуже хороший досвід.”</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- 5 -->
+      <article class="review-slide reveal-side from-bottom">
+        <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
+        </svg>
+        <div class="review-inner">
+          <div class="review-photo"><img src="../assets/Ivan Rozmetaniuk.png" alt="Іван Розметанюк"></div>
+          <div>
+            <div class="review-name">ІВАН РОЗМЕТАНЮК</div>
+            <div class="review-role">NVQ Level 2 — Drylining (гіпсокартон)</div>
+            <p class="review-text">“Цей NVQ допоміг мені офіційно підтвердити навички drylining. Асесор був дуже професійний, з ним легко було спілкуватися. Я проходив процес паралельно з роботою на об’єкті. Мій досвід оцінили правильно.
+Тепер я можу оформлювати Blue CSCS і брати кращі контракти. Однозначно рекомендую цей сервіс.”</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- 6 -->
+      <article class="review-slide reveal-side from-bottom">
+        <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
+        </svg>
+        <div class="review-inner">
+          <div class="review-photo"><img src="../assets/Roman Taistra.png" alt="Роман Таїстра"></div>
+          <div>
+            <div class="review-name">РОМАН ТАЇСТРА</div>
+            <div class="review-role">NVQ Level 2 — Drylining (гіпсокартон)</div>
+            <p class="review-text">“У мене був великий досвід, але без UK-кваліфікації. Цей процес NVQ дозволив швидко підтвердити навички. Система доказів була проста і зрозуміла. На кожному етапі я отримував підтримку.
+Тепер у мене Level 2 NVQ і більше можливостей для роботи. Це реально вплинуло на мою кар’єру.”</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- 7 -->
+      <article class="review-slide reveal-side from-bottom">
+        <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
+        </svg>
+        <div class="review-inner">
+          <div class="review-photo"><img src="../assets/Yevhenii Dorozhko.png" alt="Євгеній Дорожко"></div>
+          <div>
+            <div class="review-name">ЄВГЕНІЙ ДОРОЖКО</div>
+            <div class="review-role">NVQ Level 2 — Drylining (гіпсокартон)</div>
+            <p class="review-text">“Асесмент NVQ був добре структурований і професійний. Я надсилав фото та відео з роботи, і все перевіряли уважно. Мені не потрібно було ходити на заняття. Весь процес пройшов без стресу.
+Тепер у мене є офіційна кваліфікація у Великій Британії. Це дуже допомагає при пошуку нової роботи.”</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- 8 -->
+      <article class="review-slide reveal-side from-bottom">
+        <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
+        </svg>
+        <div class="review-inner">
+          <div class="review-photo"><img src="../assets/Dusan Vojnovic.png" alt="Душан Войнович"></div>
+          <div>
+            <div class="review-name">ДУШАН ВОЙНОВИЧ</div>
+            <div class="review-role">NVQ Level 3 — Site Supervision (нагляд/супервізія)</div>
+            <p class="review-text">“NVQ Level 3 допоміг підтвердити мій досвід супервізора. Асесор розумів мою роль і ставив правильні запитання. Усі мої управлінські задачі на сайті оцінили коректно. Мені не довелося залишати роботу, щоб завершити процес.
+Тепер у мене є визнана UK-кваліфікація. Це відкриває шлях до вищих посад.”</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- 9 -->
+      <article class="review-slide reveal-side from-bottom">
+        <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
+        </svg>
+        <div class="review-inner">
+          <div class="review-photo"><img src="../assets/Oleksandr Shania.jpg" alt="Олександр Шаня"></div>
+          <div>
+            <div class="review-name">ОЛЕКСАНДР ШАНЯ</div>
+            <div class="review-role">NVQ Level 3 — Site Supervision (нагляд/супервізія)</div>
+            <p class="review-text">“NVQ Level 3 став великим кроком уперед у моїй кар’єрі. Процес був професійний і дуже добре організований. Я показав реальний управлінський досвід через докази та обговорення. Асесор підтримував мене на всіх етапах.
+Тепер я офіційно кваліфікований як site supervisor у Великій Британії. Це дає більше впевненості та кращі можливості роботи.”</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- 10 -->
+      <article class="review-slide reveal-side from-bottom">
+        <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
+        </svg>
+        <div class="review-inner">
+          <div class="review-photo"><img src="../assets/Sreten Trbojevic.png" alt="Сретен Трбоєвич"></div>
+          <div>
+            <div class="review-name">СРЕТЕН ТРБОЄВИЧ</div>
+            <div class="review-role">NVQ Level 2 — Painting &amp; Decorating (малярні роботи)</div>
+            <p class="review-text">“Я нарешті маю офіційний NVQ з Painting and Decorating. Оцінювання базувалося на моїй реальній роботі, а не на теорії. Асесор був дуже уважний, з ним було легко домовлятися. Я пройшов усе паралельно з роботою на сайті.
+Тепер можу подаватися на краще оплачувані вакансії. Ця кваліфікація реально змінює можливості.”</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- 11 -->
+      <article class="review-slide reveal-side from-bottom">
+        <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
+        </svg>
+        <div class="review-inner">
+          <div class="review-photo"><img src="../assets/Roman Nyshchuk.png" alt="Роман Нищук"></div>
+          <div>
+            <div class="review-name">РОМАН НИЩУК</div>
+            <div class="review-role">NVQ Level 2 — Drylining (гіпсокартон)</div>
+            <p class="review-text">“Процес NVQ був простий і дуже професійний. Я використовував свою реальну роботу на сайті як докази, і це зробило все значно легшим. Асесор супроводжував мене на кожному кроці та пояснював, що потрібно.
+Мені не довелося зупиняти роботу чи відвідувати заняття. Тепер у мене NVQ Level 2 і я можу оформлювати Blue CSCS card. Це справді допомогло рухатися вперед у кар’єрі.”</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- 12 -->
+      <article class="review-slide reveal-side from-bottom">
+        <svg class="quote-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <path fill="rgba(255,138,43,0.95)" d="M10 24c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H10V24zm32 0c0-9 6-16 16-16h6v14h-5c-3 0-5 2-5 5v5h10v24H42V24z"/>
+        </svg>
+        <div class="review-inner">
+          <div class="review-photo"><img src="../assets/Vasyl Dzul.png" alt="Василь Дзул"></div>
+          <div>
+            <div class="review-name">ВАСИЛЬ ДЗУЛ</div>
+            <div class="review-role">NVQ Level 2 — Drylining (гіпсокартон)</div>
+            <p class="review-text">“Отримання NVQ пройшло дуже легко. Я просто надавав фото й відео з моєї щоденної роботи на сайті. Асесор уважно перевіряв все та підтримував мене протягом усього процесу. Жодних іспитів або навчання в класі.
+Тепер у мене є офіційна UK-кваліфікація. Це дає більше можливостей і стабільності в роботі.”</p>
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="dots" id="reviewsDots" aria-hidden="true"></div>
+  </div>
+</section>
+
 
   </main>
+
   <!-- ===== Fixed Buttons ===== -->
   <!-- Replace PHONE_NUMBER with country code format (e.g. 447555123456) -->
-  <a class="fab fab-left"
+  <a class="fab fab-left fab-pulse"
      href="https://wa.me/447759217574"
      target="_blank"
      rel="noopener"
@@ -1801,7 +2529,7 @@ I can get my Blue CSCS card. This helped me get better site access.”</p>
     </svg>
   </a>
 
-  <a class="fab fab-right"
+  <a class="fab fab-right fab-pulse"
      href="tel:+447759217574"
      aria-label="Phone">
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -1810,11 +2538,12 @@ I can get my Blue CSCS card. This helped me get better site access.”</p>
     </svg>
   </a>
 
+
   <!-- ===== Footer ===== -->
 <footer id="pageFooter">
   <div class="footer-inner footer-stack">
     <div class="footer-contacts footer-center">
-      <a href="mailto:your@email.com">your@email.com</a>
+      <a href="mailto:nvqinfo.sergio@gmail.com">nvqinfo.sergio@gmail.com</a>
       <a href="tel:+447759217574">+44 7759 217574</a>
       <a class="facebook-link" href="https://www.facebook.com/share/1BFbRG3sdo/?mibextid=LQQJ4d" target="_blank" rel="noopener">Facebook</a>
     </div>
@@ -1828,27 +2557,136 @@ I can get my Blue CSCS card. This helped me get better site access.”</p>
 
   <script>
 (() => {
-  // run after DOM exists
+  // ---------- helpers ----------
+  const $  = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+  function isPhoneView(){
+    return window.matchMedia('(max-width: 720px)').matches;
+  }
+
+  // keep --navh accurate (for scroll-margin, hero calc, etc.)
+  function updateNavHeightVar(){
+    const nav = document.querySelector('.nav');
+    if (!nav) return;
+    const h = Math.round(nav.getBoundingClientRect().height);
+    document.documentElement.style.setProperty('--navh', h + 'px');
+  }
+
+  
+function initSwipeSlider(sliderEl, dotsEl, opts = {}){
+  if (!sliderEl || !dotsEl) return;
+
+  const slides = Array.from(sliderEl.children).filter(el =>
+    el.classList.contains('trade-slide') || el.classList.contains('review-slide')
+  );
+
+  // Build dots
+  dotsEl.innerHTML = '';
+  const dots = slides.map((_, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'dot' + (i === 0 ? ' active' : '');
+    b.setAttribute('aria-label', `Slide ${i + 1}`);
+b.addEventListener('click', () => {
+  const sliderRect = sliderEl.getBoundingClientRect();
+  const slideRect  = slides[i].getBoundingClientRect();
+
+  // current scrollLeft + (slide center - slider center)
+  const sliderCenter = sliderRect.left + sliderRect.width / 2;
+  const slideCenter  = slideRect.left + slideRect.width / 2;
+
+  const nextLeft = sliderEl.scrollLeft + (slideCenter - sliderCenter);
+  sliderEl.scrollTo({ left: nextLeft, behavior: 'smooth' });
+});
+
+
+    dotsEl.appendChild(b);
+    return b;
+  });
+
+  // Observe which slide is “active”
+  const io = new IntersectionObserver((entries) => {
+    // pick the most visible slide
+    let best = null;
+    for (const e of entries){
+      if (!best || e.intersectionRatio > best.intersectionRatio) best = e;
+    }
+    if (!best) return;
+
+    const idx = slides.indexOf(best.target);
+    if (idx >= 0){
+      dots.forEach((d, j) => d.classList.toggle('active', j === idx));
+    }
+  }, { root: sliderEl, threshold: [0.35, 0.5, 0.65, 0.8] });
+
+  slides.forEach(s => io.observe(s));
+
+  // Optional desktop drag-scroll
+  if (opts.drag) enableDragScroll(sliderEl);
+}
+
+  // Desktop drag-scroll for sliders
+  function enableDragScroll(el){
+    if (!el) return;
+
+    let isDown = false;
+    let startX = 0;
+    let startScrollLeft = 0;
+
+    el.addEventListener('mousedown', (e) => {
+      if (e.button !== 0) return;
+      isDown = true;
+      el.classList.add('dragging');
+      startX = e.pageX;
+      startScrollLeft = el.scrollLeft;
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (!isDown) return;
+      isDown = false;
+      el.classList.remove('dragging');
+    });
+
+    el.addEventListener('mouseleave', () => {
+      if (!isDown) return;
+      isDown = false;
+      el.classList.remove('dragging');
+    });
+
+    el.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const dx = e.pageX - startX;
+      el.scrollLeft = startScrollLeft - dx;
+    });
+  }
+
+  // ---------- main ----------
   document.addEventListener('DOMContentLoaded', () => {
 
+    // ===== keep nav height var correct =====
+    updateNavHeightVar();
+    window.addEventListener('resize', updateNavHeightVar);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(updateNavHeightVar, 60);
+      setTimeout(updateNavHeightVar, 260);
+    });
+
     // ===== Reveal on scroll =====
-    const revealTitleEls = document.querySelectorAll('.reveal-title');
-    const revealSideEls  = document.querySelectorAll('.reveal-side');
+    const revealTitleEls = $$('.reveal-title');
+    const revealSideEls  = $$('.reveal-side');
 
     if (!('IntersectionObserver' in window)) {
       revealTitleEls.forEach(el => el.classList.add('is-visible'));
       revealSideEls.forEach(el => el.classList.add('is-visible'));
     } else {
       const ioTitle = new IntersectionObserver((entries) => {
-        for (const e of entries) {
-          e.target.classList.toggle('is-visible', e.isIntersecting);
-        }
+        for (const e of entries) e.target.classList.toggle('is-visible', e.isIntersecting);
       }, { threshold: 0.20, rootMargin: '0px 0px -12% 0px' });
 
       const ioSide = new IntersectionObserver((entries) => {
-        for (const e of entries) {
-          e.target.classList.toggle('is-visible', e.isIntersecting);
-        }
+        for (const e of entries) e.target.classList.toggle('is-visible', e.isIntersecting);
       }, { threshold: 0.16, rootMargin: '0px 0px -10% 0px' });
 
       revealTitleEls.forEach(el => ioTitle.observe(el));
@@ -1856,17 +2694,12 @@ I can get my Blue CSCS card. This helped me get better site access.”</p>
     }
 
     // ===== Drawer menu logic =====
-    const body = document.body;
-    const hamburger = document.getElementById('hamburger');
-    const overlay = document.getElementById('drawerOverlay');
-    const closeBtn = document.getElementById('drawerClose');
-    const drawer = document.getElementById('drawer');
-
-    function isPhoneView(){
-      return window.matchMedia('(max-width: 720px)').matches;
-    }
-
-    const footerEl = document.getElementById('pageFooter');
+    const body      = document.body;
+    const hamburger = $('#hamburger');
+    const overlay   = $('#drawerOverlay');
+    const closeBtn  = $('#drawerClose');
+    const drawer    = $('#drawer');
+    const footerEl  = $('#pageFooter');
 
     function recomputeFooterState(){
       if (!isPhoneView()){
@@ -1892,23 +2725,66 @@ I can get my Blue CSCS card. This helped me get better site access.”</p>
       body.classList.toggle('footer-in-view', shouldJump);
     }
 
-    function openDrawer(){
-      if (!hamburger || !drawer || !overlay) return;
-      body.classList.add('drawer-open');
-      hamburger.setAttribute('aria-expanded','true');
-      drawer.setAttribute('aria-hidden','false');
-      overlay.setAttribute('aria-hidden','false');
-      body.classList.remove('footer-in-view');
-    }
+    // --- iOS-safe scroll lock ---
+let __scrollY = 0;
 
-    function closeDrawer(){
-      if (!hamburger || !drawer || !overlay) return;
-      body.classList.remove('drawer-open');
-      hamburger.setAttribute('aria-expanded','false');
-      drawer.setAttribute('aria-hidden','true');
-      overlay.setAttribute('aria-hidden','true');
-      requestAnimationFrame(recomputeFooterState);
-    }
+function lockPageScroll(){
+  __scrollY = window.scrollY || 0;
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${__scrollY}px`;
+  document.body.style.left = '0';
+  document.body.style.right = '0';
+  document.body.style.width = '100%';
+}
+
+function unlockPageScroll(){
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.left = '';
+  document.body.style.right = '';
+  document.body.style.width = '';
+  window.scrollTo(0, __scrollY);
+}
+
+// OPTIONAL: prevent touchmove from reaching the page behind (iOS)
+function stopTouchMove(e){
+  // allow scrolling INSIDE the drawer only
+  const drawerEl = document.getElementById('drawer');
+  if (drawerEl && drawerEl.contains(e.target)) return;
+  e.preventDefault();
+}
+
+function openDrawer(){
+  // lock page first (prevents “scroll behind”)
+  lockPageScroll();
+
+  body.classList.add('drawer-open');
+  hamburger.setAttribute('aria-expanded','true');
+
+  drawer.setAttribute('aria-hidden','false');
+  overlay.setAttribute('aria-hidden','false');
+
+  // iOS extra safety
+  document.addEventListener('touchmove', stopTouchMove, { passive:false });
+}
+
+function closeDrawer(){
+  // move focus OUT before hiding drawer (keeps your aria warning away if you have this)
+  if (drawer.contains(document.activeElement)) hamburger.focus();
+
+  body.classList.remove('drawer-open');
+  hamburger.setAttribute('aria-expanded','false');
+
+  drawer.setAttribute('aria-hidden','true');
+  overlay.setAttribute('aria-hidden','true');
+
+  // unlock page after closing
+  unlockPageScroll();
+  document.removeEventListener('touchmove', stopTouchMove, { passive:false });
+
+  requestAnimationFrame(recomputeFooterState);
+}
+
 
     hamburger?.addEventListener('click', () => {
       body.classList.contains('drawer-open') ? closeDrawer() : openDrawer();
@@ -1924,7 +2800,7 @@ I can get my Blue CSCS card. This helped me get better site access.”</p>
       target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    document.querySelectorAll('[data-nav]').forEach(link => {
+    $$('[data-nav]').forEach(link => {
       link.addEventListener('click', (e) => {
         const href = link.getAttribute('href') || '';
         if (href.startsWith('#')) {
@@ -1935,74 +2811,22 @@ I can get my Blue CSCS card. This helped me get better site access.”</p>
       });
     });
 
-    // ===== Accordion (multi-open) =====
-    document.querySelectorAll('#accordion .acc-item').forEach(item => {
-      const btn = item.querySelector('.acc-btn');
-      if (!btn) return;
-      btn.addEventListener('click', () => {
-        const isOpen = item.classList.contains('open');
-        item.classList.toggle('open', !isOpen);
-        btn.setAttribute('aria-expanded', String(!isOpen));
-      });
+// ===== Accordion (multi-open) — works for ALL .accordion blocks =====
+$$('.accordion').forEach(acc => {
+  $$('.acc-item', acc).forEach(item => {
+    const btn = $('.acc-btn', item);
+    if (!btn) return;
+
+    btn.addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      item.classList.toggle('open', !isOpen);
+      btn.setAttribute('aria-expanded', String(!isOpen));
     });
+  });
+});
 
-    // ===== Slider dots =====
-    function setupDots(sliderId, dotsId) {
-      const slider = document.getElementById(sliderId);
-      const dotsWrap = document.getElementById(dotsId);
-      if (!slider || !dotsWrap) return;
 
-      const slides = Array.from(slider.children);
-
-      function buildDots() {
-        dotsWrap.innerHTML = '';
-        slides.forEach((_, i) => {
-          const d = document.createElement('div');
-          d.className = 'dot' + (i === 0 ? ' active' : '');
-          d.addEventListener('click', () => {
-            slides[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-          });
-          dotsWrap.appendChild(d);
-        });
-      }
-
-      function setActiveDot(index) {
-        const dots = Array.from(dotsWrap.children);
-        dots.forEach((d, i) => d.classList.toggle('active', i === index));
-      }
-
-      function currentSlideIndex() {
-        const sRect = slider.getBoundingClientRect();
-        const sCenter = sRect.left + sRect.width / 2;
-
-        let bestIdx = 0;
-        let bestDist = Infinity;
-
-        slides.forEach((s, i) => {
-          const r = s.getBoundingClientRect();
-          const c = r.left + r.width / 2;
-          const dist = Math.abs(c - sCenter);
-          if (dist < bestDist) { bestDist = dist; bestIdx = i; }
-        });
-
-        return bestIdx;
-      }
-
-      buildDots();
-
-      let raf = null;
-      slider.addEventListener('scroll', () => {
-        if (raf) cancelAnimationFrame(raf);
-        raf = requestAnimationFrame(() => setActiveDot(currentSlideIndex()));
-      });
-
-      window.addEventListener('resize', () => setActiveDot(currentSlideIndex()));
-
-      setActiveDot(0);
-    }
-
-    setupDots('tradesSlider', 'tradesDots');
-    setupDots('reviewsSlider', 'reviewsDots');
+    
 
     // ===== Footer FAB jump logic =====
     window.addEventListener('scroll', recomputeFooterState, { passive: true });
@@ -2010,7 +2834,7 @@ I can get my Blue CSCS card. This helped me get better site access.”</p>
     recomputeFooterState();
 
     // ===== Dissolve card backgrounds =====
-    const dissolveEls = document.querySelectorAll('.dissolve-card');
+    const dissolveEls = $$('.dissolve-card');
     if ('IntersectionObserver' in window && dissolveEls.length) {
       const thresholds = Array.from({ length: 101 }, (_, i) => i / 100);
       const ioDissolve = new IntersectionObserver((entries) => {
@@ -2025,12 +2849,11 @@ I can get my Blue CSCS card. This helped me get better site access.”</p>
     }
 
     // ===== Language selector =====
-    const langWrap = document.getElementById('langWrap');
-    const langBtn  = document.getElementById('langBtn');
-    const langLabel = document.getElementById('langLabel');
-
-    const drawerSegBtns = document.querySelectorAll('.seg-btn[data-lang]');
-    const menuOpts = document.querySelectorAll('.lang-opt[data-lang]');
+    const langWrap   = $('#langWrap');
+    const langBtn    = $('#langBtn');
+    const langLabel  = $('#langLabel');
+    const drawerSegBtns = $$('.seg-btn[data-lang]');
+    const menuOpts   = $$('.lang-opt[data-lang]');
 
     const LANGS = { uk: 'UA', en: 'EN', ru: 'RU' };
 
@@ -2042,7 +2865,6 @@ I can get my Blue CSCS card. This helped me get better site access.”</p>
       if (!LANGS[lang]) return;
 
       localStorage.setItem('site_lang', lang);
-
       if (langLabel) langLabel.textContent = LANGS[lang];
 
       menuOpts.forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
@@ -2050,11 +2872,8 @@ I can get my Blue CSCS card. This helped me get better site access.”</p>
 
       document.documentElement.setAttribute('lang', lang === 'uk' ? 'uk' : lang);
 
-      // navigate to language folder
       const target = '/' + lang + '/';
-      if (!location.pathname.endsWith(target)) {
-        location.href = target;
-      }
+      if (!location.pathname.endsWith(target)) location.href = target;
     }
 
     function closeLangMenu(){
@@ -2078,84 +2897,143 @@ I can get my Blue CSCS card. This helped me get better site access.”</p>
 
     setLang(getLang());
 
-    // ===== Smart swipe for sliders =====
-    function smartSliderSwipe(el){
-      if(!el) return;
+// ===== Sliders (Trades + Reviews) =====
+const tradesSlider = document.getElementById('tradesSlider');
+const tradesDots   = document.getElementById('tradesDots');
 
-      let sx = 0, sy = 0;
-      let decided = false;
-      let isHorizontal = false;
+const reviewsSlider = document.getElementById('reviewsSlider');
+const reviewsDots   = document.getElementById('reviewsDots');
 
-      el.addEventListener("touchstart", (e) => {
-        if (!e.touches || e.touches.length !== 1) return;
-        sx = e.touches[0].clientX;
-        sy = e.touches[0].clientY;
-        decided = false;
-        isHorizontal = false;
-      }, { passive: true });
+// Trades: swipe on phone (dots auto-hide on desktop via CSS)
+initSwipeSlider(tradesSlider, tradesDots, { drag: false });
 
-      el.addEventListener("touchmove", (e) => {
-        if (!e.touches || e.touches.length !== 1) return;
-        if (el.scrollWidth <= el.clientWidth + 1) return;
-
-        const dx = e.touches[0].clientX - sx;
-        const dy = e.touches[0].clientY - sy;
-
-        if (!decided) {
-          if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
-          decided = true;
-          isHorizontal = Math.abs(dx) > Math.abs(dy);
-        }
-
-        if (isHorizontal) e.preventDefault();
-      }, { passive: false });
-    }
-
-    smartSliderSwipe(document.getElementById("tradesSlider"));
-    smartSliderSwipe(document.getElementById("reviewsSlider"));
-
-    // ===== Drag scroll (desktop) =====
-    function enableDragScroll(el){
-      if (!el) return;
-
-      let isDown = false;
-      let startX = 0;
-      let startScrollLeft = 0;
-
-      el.addEventListener('mousedown', (e) => {
-        if (e.button !== 0) return;
-        isDown = true;
-        el.classList.add('dragging');
-        startX = e.pageX;
-        startScrollLeft = el.scrollLeft;
-      });
-
-      window.addEventListener('mouseup', () => {
-        if (!isDown) return;
-        isDown = false;
-        el.classList.remove('dragging');
-      });
-
-      el.addEventListener('mouseleave', () => {
-        if (!isDown) return;
-        isDown = false;
-        el.classList.remove('dragging');
-      });
-
-      el.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        e.preventDefault();
-        const dx = e.pageX - startX;
-        el.scrollLeft = startScrollLeft - dx;
-      });
-    }
-
-    enableDragScroll(document.getElementById('reviewsSlider'));
-    enableDragScroll(document.getElementById('tradesSlider'));
+// Reviews: swipe on phone + desktop + allow drag on desktop
+initSwipeSlider(reviewsSlider, reviewsDots, { drag: true });
 
   }); // DOMContentLoaded
 })();
+
+    (function () {
+  // Mobile: horizontal swipe on sliders, but allow normal vertical page scroll.
+  // Also: make SHORT swipes work by snapping to next/prev on touchend.
+
+  const sliders = document.querySelectorAll('.slider');
+
+  // TUNING (you can tweak)
+  const INTENT_TH = 2;        // px to decide X vs Y (very small)
+  const SNAP_DIST = 12;       // px distance needed to change slide (short swipes)
+  const FLICK_V   = 0.35;     // px/ms velocity to count as a flick (fast short swipe)
+
+  function getSlides(slider){
+    return Array.from(slider.children).filter(el =>
+      el.classList.contains('trade-slide') || el.classList.contains('review-slide')
+    );
+  }
+
+  function snapTo(slider, slides, index){
+    index = Math.max(0, Math.min(slides.length - 1, index));
+    const target = slides[index];
+    if (!target) return;
+
+    // scroll to the slide's left edge (works with your scroll-snap + padding)
+    slider.scrollTo({ left: target.offsetLeft - slider.offsetLeft, behavior: 'smooth' });
+  }
+
+  function nearestIndex(slider, slides){
+    const left = slider.scrollLeft;
+    let bestI = 0, bestD = Infinity;
+    slides.forEach((s, i) => {
+      const d = Math.abs((s.offsetLeft - slider.offsetLeft) - left);
+      if (d < bestD) { bestD = d; bestI = i; }
+    });
+    return bestI;
+  }
+
+  sliders.forEach(slider => {
+    const slides = getSlides(slider);
+    if (!slides.length) return;
+
+    let startX = 0, startY = 0, startLeft = 0;
+    let lastX = 0, lastT = 0;
+    let startT = 0;
+    let lock = null; // 'x' | 'y' | null
+    let activeIndex = 0;
+
+    slider.addEventListener('touchstart', (e) => {
+      if (!e.touches || e.touches.length !== 1) return;
+
+      const t = e.touches[0];
+      startX = lastX = t.clientX;
+      startY = t.clientY;
+      startLeft = slider.scrollLeft;
+
+      startT = lastT = performance.now();
+      lock = null;
+
+      // keep a “current” index baseline
+      activeIndex = nearestIndex(slider, slides);
+    }, { passive: true });
+
+    slider.addEventListener('touchmove', (e) => {
+      if (!e.touches || e.touches.length !== 1) return;
+
+      const t = e.touches[0];
+      const dx = t.clientX - startX;
+      const dy = t.clientY - startY;
+
+      if (lock === null) {
+        if (Math.abs(dx) < INTENT_TH && Math.abs(dy) < INTENT_TH) return;
+        lock = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+      }
+
+      if (lock === 'x') {
+        // Manual horizontal scroll (Safari-friendly) + stop page scroll for this gesture
+        slider.scrollLeft = startLeft - dx;
+        e.preventDefault();
+
+        // velocity tracking
+        const now = performance.now();
+        lastX = t.clientX;
+        lastT = now;
+      }
+      // lock === 'y' => do nothing (page scroll works)
+    }, { passive: false });
+
+    slider.addEventListener('touchend', () => {
+      if (lock !== 'x') { lock = null; return; }
+
+      const endT = performance.now();
+      const totalDt = Math.max(1, endT - startT);
+
+      // distance of gesture (positive = moved right finger, so content should go left)
+      const totalDx = (lastX - startX);
+
+      // velocity (px/ms)
+      const v = totalDx / totalDt;
+
+      // Decide if we should go next/prev
+      let nextIndex = activeIndex;
+
+      if (Math.abs(totalDx) >= SNAP_DIST || Math.abs(v) >= FLICK_V) {
+        // finger moved left -> next slide (content goes right)
+        if (totalDx < 0) nextIndex = activeIndex + 1;
+        else nextIndex = activeIndex - 1;
+      } else {
+        // small slow move: just snap to nearest
+        nextIndex = nearestIndex(slider, slides);
+      }
+
+      snapTo(slider, slides, nextIndex);
+      lock = null;
+    }, { passive: true });
+
+    slider.addEventListener('touchcancel', () => { lock = null; }, { passive: true });
+  });
+})();
 </script>
+
+
+
 
 </body>
 </html>
