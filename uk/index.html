@@ -1732,32 +1732,159 @@ body.drawer-open .nav{
 
 
 
-    <!-- 1.15 ABOUT US -->
+    <!-- 1.15 ABOUT US (UPDATED + ACCORDION) -->
 <section id="about" aria-label="About us">
-    <div class="surface card dissolve-card glow-soft">
+  <div class="surface card dissolve-card glow-soft">
+
+    <div class="kicker reveal-side from-left">Модуль</div>
     <h2 class="reveal-title">ПРО НАС</h2>
 
     <p class="lead reveal-side from-left">
-      Ми допомагаємо будівельникам у Великобританії отримати <strong>NVQ</strong> та <strong>CSCS</strong> —
-      <strong>швидко, офіційно</strong> і <strong>без відриву від роботи</strong>.
-      Якщо ви вже працюєте на сайті — ми допоможемо підтвердити ваш реальний досвід за стандартами UK.
+      Ми допомагаємо людям, які хочуть працювати на будівельних об’єктах
+      у Великій Британії, офіційно отримати всі необхідні сертифікати і
+      карти для легальної роботи згідно вимог будівельної системи UK.
     </p>
 
-    <div class="kicker reveal-side from-right" style="margin-top:12px;">Ми спеціалізуємося в:</div>
-    <ul class="bullets">
-      <li class="reveal-side from-left">NVQ Level 2 / 3 / 6</li>
-      <li class="reveal-side from-right">Blue / Gold / Black CSCS cards</li>
-      <li class="reveal-side from-left">Trades та Site Management</li>
-      <li class="reveal-side from-right">Підтримка IPAF (MEWP)</li>
-      <li class="reveal-side from-left">Клієнти: UA / RU / EN</li>
-    </ul>
+    <div class="kicker reveal-side from-right" style="margin-top:12px;">Наші напрямки</div>
 
-    <div class="kicker reveal-side from-left" style="margin-top:14px;">Наша місія</div>
-    <p class="sublead reveal-side from-right">
-      Допомогти будівельникам працювати легально, заробляти більше і рухатися вперед.
-    </p>
+    <!-- Accordion (same as “Процес”) -->
+    <div class="accordion" id="aboutAccordion" style="margin-top:10px;">
+
+      <!-- Green CSCS -->
+      <div class="acc-item reveal-side from-left">
+        <button class="acc-btn" type="button" aria-expanded="false">
+          <span>Green CSCS Card (зелена карта)</span>
+          <span class="chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-panel">
+          <p>
+            ● Допомога для людей, які не говорять англійською мовою<br/>
+            ● Підтримка при складнощах зі здачею Health &amp; Safety Test<br/>
+            ● Пояснюємо весь процес і супроводжуємо крок за кроком, щоб отримати карту легко та без стресу
+          </p>
+        </div>
+      </div>
+
+      <!-- NVQ -->
+      <div class="acc-item reveal-side from-right">
+        <button class="acc-btn" type="button" aria-expanded="false">
+          <span>NVQ Certificates</span>
+          <span class="chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-panel">
+          <p>
+            ● Level 1, Level 2, Level 3 та Level 6<br/>
+            ● Для робітничих спеціальностей і Site Management<br/>
+            ● Офіційний процес без відриву від роботи
+          </p>
+        </div>
+      </div>
+
+      <!-- IPAF -->
+      <div class="acc-item reveal-side from-left">
+        <button class="acc-btn" type="button" aria-expanded="false">
+          <span>IPAF (MEWP) сертифікація</span>
+          <span class="chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-panel">
+          <p>
+            ● Підтримка в отриманні категорій 3A, 3B<br/>
+            ● Також допомога з іншими доступними категоріями IPAF
+          </p>
+        </div>
+      </div>
+
+      <!-- Plant machinery cards -->
+      <div class="acc-item reveal-side from-right">
+        <button class="acc-btn" type="button" aria-expanded="false">
+          <span>Сертифікація для роботи на будівельній техніці у Великій Британії</span>
+          <span class="chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-panel">
+          <p>
+            ● Допомагаємо отримати офіційні сертифікаційні карти для роботи та керування будівельною технікою<br/>
+            ● Працюємо з британськими форматами карт операторів техніки (типу CPCS / NPORS та аналогічні)<br/>
+            ● Пояснюємо, яка саме карта потрібна у вашому випадку, та супроводжуємо весь процес отримання
+          </p>
+        </div>
+      </div>
+
+      <!-- PASMA -->
+      <div class="acc-item reveal-side from-left">
+        <button class="acc-btn" type="button" aria-expanded="false">
+          <span>PASMA сертифікат</span>
+          <span class="chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-panel">
+          <p>
+            ● Для роботи з вежами та мобільними доступними платформами
+          </p>
+        </div>
+      </div>
+
+      <!-- Extra mandatory certs -->
+      <div class="acc-item reveal-side from-right">
+        <button class="acc-btn" type="button" aria-expanded="false">
+          <span>Додаткові обовʼязкові сертифікати для роботи на сайті</span>
+          <span class="chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-panel">
+          <p>
+            ● First Aid<br/>
+            ● SSSTS<br/>
+            ● SMSTS<br/>
+            ● Інші необхідні курси та сертифікації відповідно до вимог обʼєкта
+          </p>
+        </div>
+      </div>
+
+      <!-- Language support -->
+      <div class="acc-item reveal-side from-left">
+        <button class="acc-btn" type="button" aria-expanded="false">
+          <span>Мовна підтримка</span>
+          <span class="chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-panel">
+          <p>
+            ● Працюємо з кандидатами, які говорять українською, російською та англійською мовам<br/>
+            ● Пояснюємо всі етапи просто, чітко та зрозуміло
+          </p>
+        </div>
+      </div>
+
+    </div>
+
   </div>
 </section>
+
 
     <!-- 1.2 NVQ -->
     <section id="nvq" aria-label="NVQ">
