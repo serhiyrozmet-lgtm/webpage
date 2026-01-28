@@ -1,26 +1,27 @@
 <!doctype html>
-<html lang="en">
+<html lang="x-default">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Redirecting…</title>
-  <meta http-equiv="refresh" c:contentReference[oaicite:7]{index=7}>
+
   <script>
     (function () {
       const saved = localStorage.getItem('site_lang');
-      const browser = (navigator.language || 'uk').toLowerCase();
+      const browser = (navigator.language || 'en').toLowerCase();
 
       function pickLang() {
         if (saved) return saved;
 
         if (browser.startsWith('uk')) return 'uk';
         if (browser.startsWith('ru')) return 'ru';
-        return 'en'; // default for everything else
+        return 'en';
       }
 
       const lang = pickLang();
-      const target = lang + '/';
-      if (!location.pathname.endsWith('/' + target)) {
+      const target = '/' + lang + '/';
+
+      if (!location.pathname.startsWith(target)) {
         location.replace(target);
       }
     })();
